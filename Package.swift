@@ -1,28 +1,33 @@
-// swift-tools-version:5.5
+// swift-tools-version: 5.7
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
 
-let package = Package(
-    name: "SwiftExtensions",
-    products: [
-        // Products define the executables and libraries a package produces, and make them visible to other packages.
-        .library(
-            name: "SwiftExtensions",
-            targets: ["SwiftExtensions"]),
-    ],
-    dependencies: [
-        // Dependencies declare other packages that this package depends on.
-        // .package(url: /* package url */, from: "1.0.0"),
-    ],
-    targets: [
-        // Targets are the basic building blocks of a package. A target can define a module or a test suite.
-        // Targets can depend on other targets in this package, and on products in packages this package depends on.
-        .target(
-            name: "SwiftExtensions",
-            dependencies: []),
-        .testTarget(
-            name: "SwiftExtensionsTests",
-            dependencies: ["SwiftExtensions"]),
-    ]
+let package = Package(name: "SwiftExtensions")
+
+package.platforms = [
+    .iOS(.v11),
+    .macOS(.v10_13),
+    .watchOS(.v6),
+    .tvOS(.v11),
+    .macCatalyst(.v13)
+]
+
+package.targets.append(
+    .target(
+        name: "SwiftExtensions",
+        dependencies: []
+    )
 )
+
+package.targets.append(
+    .testTarget(
+        name: "SwiftExtensionsTests",
+        dependencies: ["SwiftExtensions"]
+    )
+)
+
+package.products = package.targets.filter { !$0.isTest }
+.map {
+    Product.library(name: $0.name, targets: [$0.name])
+}
