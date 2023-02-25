@@ -148,7 +148,7 @@ public extension SubViewLayoutProtocol where Self: NSUIView {
     ///   - horizontalPadding: The horizontal padding
     ///   - verticalPadding: The vertical padding
     ///   - saftyLayout: Whether the safe area is required.
-    func layoutCenter(subView view: NSUIView, horizontalPadding: CGFloat = 0, verticalPadding: CGFloat = 0, saftyLayout: Bool) {
+    func layoutCenter(subView view: NSUIView, horizontalPadding: CGFloat = 0, verticalPadding: CGFloat = 0, saftyLayout: Bool = false) {
         addAutoLayout(subView: view)
         
         let layoutGuide = getLayoutGuide(saftyLayout: saftyLayout)

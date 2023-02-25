@@ -126,6 +126,12 @@ public extension Dictionary {
     mutating func merge(_ other: [Key : Value]) {
         merge(other) { current, _ in current }
     }
+    
+    func merging(_ other: [Key: Value]) -> [Key: Value] {
+        var dict = self
+        dict.merge(other)
+        return dict
+    }
 }
 
 public extension Dictionary where Value: Comparable, Value: Hashable {

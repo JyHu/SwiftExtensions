@@ -134,6 +134,56 @@ public extension NSTableView {
             tableColumn.isHidden = identifiers.contains(tableColumn.identifier)
         }
     }
+    
+    func rowColumn(for event: NSEvent) -> (row: Int, column: Int) {
+        let point = convert(event.locationInWindow, from: nil)
+
+        let row = self.row(at: point)
+        let column = self.column(at: point)
+        
+        return (row, column)
+    }
+    
+    func reloadAndKeepSelection() {
+        var selectedRow = selectedRow
+        
+        reloadData()
+        
+        if numberOfRows == 0 { return }
+        
+        if selectedRow < 0 || selectedRow >= numberOfRows {
+            selectedRow = min(max(selectedRow, 0), numberOfRows - 1)
+        }
+        
+        selectRowIndexes(IndexSet(arrayLiteral: selectedRow), byExtendingSelection: true)
+    }
+    
+    func reloadData(atRow row: Int) {
+        guard row >= 0 && row < numberOfRows else { return }
+        let columns = IndexSet(0..<numberOfColumns)
+        reloadData(forRowIndexes: IndexSet(arrayLiteral: row), columnIndexes: columns)
+    }
+    
+    @discardableResult
+    func addTableColumn(identifier: NSUserInterfaceItemIdentifier, title: String, minWidth: CGFloat? = nil, maxWidth: CGFloat? = nil, width: CGFloat? = nil) -> NSTableColumn {
+        let tableColumn = NSTableColumn(identifier: identifier, title: title, minWidth: minWidth, maxWidth: maxWidth, width: width)
+        self.addTableColumn(tableColumn)
+        return tableColumn
+    }
+    
+    func reuse<T>(with identifier: NSUserInterfaceItemIdentifier) -> T where T: NSTableCellView {
+        return reuse(with: identifier, orCreate: T())
+    }
+    
+    func reuse<T>(with identifier: NSUserInterfaceItemIdentifier, orCreate creation: @autoclosure() -> T) -> T where T: NSView {
+        if let cellView = makeView(withIdentifier: identifier, owner: self) as? T {
+            return cellView
+        }
+        
+        let cellView = creation()
+        cellView.identifier = identifier
+        return cellView
+    }
 }
 
 #endif

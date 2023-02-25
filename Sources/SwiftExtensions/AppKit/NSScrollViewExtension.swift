@@ -10,17 +10,23 @@
 import AppKit
 
 public extension NSScrollView {
-    convenience init(documentView: NSView) {
+    convenience init(documentView: NSView, isHorizontal: Bool = false, hasScroller: Bool = true) {
         self.init(frame: NSMakeRect(0, 0, 100, 60))
         self.documentView = documentView
         
         drawsBackground = false
         focusRingType = .none
-        hasHorizontalScroller = true
-        hasVerticalScroller = true
-        horizontalScrollElasticity = .automatic
-        verticalScrollElasticity = .automatic
         scrollerStyle = .overlay
+        
+        if hasScroller {        
+            if isHorizontal {
+                hasHorizontalScroller = true
+                horizontalScrollElasticity = .automatic
+            } else {
+                hasVerticalScroller = true
+                verticalScrollElasticity = .automatic
+            }
+        }
     }
 }
 

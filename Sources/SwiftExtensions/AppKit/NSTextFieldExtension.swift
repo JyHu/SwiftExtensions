@@ -10,21 +10,21 @@
 import AppKit
 
 public extension NSTextField {
-    class func label(with textColor: NSColor? = nil, lineBreakMode: NSLineBreakMode = .byTruncatingTail) -> NSTextField {
-        let label = NSTextField(labelWithString: "")
-        label.lineBreakMode = lineBreakMode
-        if let textColor = textColor {
-            label.textColor = textColor
-        }
-        return label
+    convenience init(textColor: NSColor) {
+        self.init(frame: NSMakeRect(0, 0, 100, 100))
+        self.textColor = textColor
     }
     
-    class func wrappingLabel(with textColor: NSColor? = nil) -> NSTextField {
-        let label = NSTextField(wrappingLabelWithString: "")
-        if let textColor = textColor {
-            label.textColor = textColor
-        }
-        return label
+    convenience init(labelWithString stringValue: String, textColor: NSColor, lineBreakMode: NSLineBreakMode = .byTruncatingTail) {
+        self.init(labelWithString: stringValue)
+        self.textColor = textColor
+        self.lineBreakMode = lineBreakMode
+    }
+    
+    convenience init(wrappingLabelWithString stringValue: String, textColor: NSColor, lineBreakMode: NSLineBreakMode = .byTruncatingTail) {
+        self.init(wrappingLabelWithString: stringValue)
+        self.textColor = textColor
+        self.lineBreakMode = lineBreakMode
     }
 }
 

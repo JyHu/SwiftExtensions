@@ -16,8 +16,8 @@ import UIKit
 #endif
 
 public extension NSMutableAttributedString {
-    func append(_ string: String) {
-        append(NSAttributedString(string: string))
+    func append(_ string: String, attributes: [NSAttributedString.Key: Any] = [:]) {
+        append(NSAttributedString(string: string, attributes: attributes))
     }
     
 #if (canImport(AppKit) && !targetEnvironment(macCatalyst)) || canImport(UIKit)

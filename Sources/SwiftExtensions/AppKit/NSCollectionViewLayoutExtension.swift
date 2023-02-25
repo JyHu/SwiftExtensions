@@ -75,7 +75,7 @@ public extension NSCollectionViewGridLayout {
 }
 
 public extension NSCollectionViewFlowLayout {
-    class SizeDetectableLayout: NSCollectionViewGridLayout {
+    class SizeDetectableLayout: NSCollectionViewFlowLayout {
         public override func prepare() {
             super.prepare()
             inspectPrepareAction()
@@ -95,7 +95,7 @@ public extension NSCollectionViewCompositionalLayout {
 
 @available(macOS 10.15, *)
 public extension NSCollectionViewTransitionLayout {
-    class SizeDetectableLayout: NSCollectionViewCompositionalLayout {
+    class SizeDetectableLayout: NSCollectionViewTransitionLayout {
         public override func prepare() {
             super.prepare()
             inspectPrepareAction()

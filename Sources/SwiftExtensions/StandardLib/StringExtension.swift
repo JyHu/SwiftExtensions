@@ -23,34 +23,40 @@ public extension String {
 
 public extension String {
     subscript (bounds: CountableClosedRange<Int>) -> String? {
+        guard bounds.lowerBound >= 0 && bounds.upperBound < count else { return nil }
         let start = index(startIndex, offsetBy: bounds.lowerBound)
         let end = index(startIndex, offsetBy: bounds.upperBound)
         return String(self[start...end])
     }
     
-    subscript (bounds: CountableRange<Int>) -> String {
+    subscript (bounds: CountableRange<Int>) -> String? {
+        guard bounds.lowerBound >= 0 && bounds.upperBound <= count else { return nil }
         let start = index(startIndex, offsetBy: bounds.lowerBound)
         let end = index(startIndex, offsetBy: bounds.upperBound)
         return String(self[start..<end])
     }
     
-    subscript (bounds: PartialRangeUpTo<Int>) -> String {
+    subscript (bounds: PartialRangeUpTo<Int>) -> String? {
+        guard bounds.upperBound <= count else { return nil }
         let end = index(startIndex, offsetBy: bounds.upperBound)
         return String(self[startIndex..<end])
     }
     
-    subscript (bounds: PartialRangeThrough<Int>) -> String {
+    subscript (bounds: PartialRangeThrough<Int>) -> String? {
+        guard bounds.upperBound < count else { return nil }
         let end = index(startIndex, offsetBy: bounds.upperBound)
         return String(self[startIndex...end])
     }
     
-    subscript (bounds: CountablePartialRangeFrom<Int>) -> String {
+    subscript (bounds: CountablePartialRangeFrom<Int>) -> String? {
+        guard bounds.lowerBound >= 0 && bounds.lowerBound < count else { return nil }
         let start = index(startIndex, offsetBy: bounds.lowerBound)
         return String(self[start..<endIndex])
     }
     
     subscript (nsrange: NSRange) -> String? {
         if nsrange.location == NSNotFound ||
+            nsrange.location < 0 || nsrange.length < 0 ||
             nsrange.location + nsrange.length > count {
             return nil
         }
@@ -175,7 +181,7 @@ public extension String {
     func stringByAppending(pathComponent: String) -> String {
         if hasSuffix("/") {
             if pathComponent.hasPrefix("/") {
-                return self + pathComponent[1...]
+                return self + String(pathComponent.dropFirst())
             }
             
             return self + pathComponent
@@ -191,7 +197,7 @@ public extension String {
     mutating func append(pathComponent: String) {
         if hasSuffix("/") {
             if pathComponent.hasPrefix("/") {
-                self.append(pathComponent[1...])
+                self.append(String(pathComponent.dropFirst()))
             } else {
                 self.append(pathComponent)
             }
@@ -247,5 +253,49 @@ public extension String {
     /// 是否是有效整数
     var isLegalPureIntNumber: Bool {
         return isLegal(with: "^\\d+$")
+    }
+}
+
+public extension String {
+    func toUTF8Data(allowLossyConversion: Bool = false) -> Data? {
+        return data(using: .utf8, allowLossyConversion: false)
+    }
+    
+    func toBase64Data(options: Data.Base64DecodingOptions = []) -> Data? {
+        return Data(base64Encoded: self, options: options)
+    }
+    
+    func toHexData() -> Data? {
+        if count % 2 != 0 { return nil }
+        
+        var bytes: [UInt8] = []
+        var sum: Int = 0
+        
+        let intRange = 48...57
+        let lowerCaseRange = 97...102
+        let upperCaseRange = 65...70
+        
+        for (index, c) in self.utf8CString.enumerated() {
+            var intc = Int(c.byteSwapped)
+            
+            if intc == 0 { break }
+            if intRange.contains(intc) {
+                intc -= 48
+            } else if lowerCaseRange.contains(intc) {
+                intc -= 87
+            } else if upperCaseRange.contains(intc) {
+                intc -= 55
+            } else {
+                assertionFailure("输入字符串格式不对")
+            }
+            
+            sum = sum * 16 + intc
+            if index % 2 != 0 {
+                bytes.append(UInt8(sum))
+                sum = 0
+            }
+        }
+        
+        return Data(bytes: bytes, count: bytes.count)
     }
 }

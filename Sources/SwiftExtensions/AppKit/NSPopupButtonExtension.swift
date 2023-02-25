@@ -19,6 +19,10 @@ public extension NSPopUpButton {
         menuItem?.representedObject = representedObject
         return menuItem
     }
+    
+    func selectedItemRepresentedObject<T>() -> T? {
+        return selectedItem?.representedObject as? T
+    }
 }
 
 public extension NSPopUpButtonCell {

@@ -17,11 +17,12 @@ public extension NSObject {
     ///   - representedObject: 缓存信息
     ///   - toolTip: 提示信息
     /// - Returns: 菜单项
-    func createMenuItem(with title: String, action: Selector? = nil, representedObject: Any? = nil, keyEquivalent: String? = nil, toolTip: String? = nil) -> NSMenuItem {
+    func createMenuItem(with title: String, action: Selector? = nil, representedObject: Any? = nil, keyEquivalent: String? = nil, toolTip: String? = nil, state: NSControl.StateValue = .off) -> NSMenuItem {
         let item = NSMenuItem(title: title, action: action, keyEquivalent: keyEquivalent ?? "")
         item.target = self
         item.representedObject = representedObject
         item.toolTip = toolTip
+        item.state = state
         return item
     }
     
@@ -62,7 +63,7 @@ public extension NSMenu {
 }
 
 public extension NSMenuItem {
-    convenience init(title: String, target: AnyObject, action: Selector? = nil, representedObject: Any? = nil, keyEquivalent: String? = nil, toolTip: String? = nil) {
+    convenience init(title: String, target: AnyObject? = nil, action: Selector? = nil, representedObject: Any? = nil, keyEquivalent: String? = nil, toolTip: String? = nil) {
         self.init(title: title, action: action, keyEquivalent: keyEquivalent ?? "")
         self.target = target
         self.toolTip = toolTip

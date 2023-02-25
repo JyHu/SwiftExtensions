@@ -15,6 +15,12 @@ public extension NSStackView {
             removeView(view)
         }
     }
+    
+    func appendSpace(_ space: CGFloat) {
+        if let lastView = arrangedSubviews.last {
+            setCustomSpacing(space, after: lastView)
+        }
+    }
 }
 
 #endif

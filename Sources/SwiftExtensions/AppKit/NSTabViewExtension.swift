@@ -86,7 +86,7 @@ public extension NSTabView {
     
     func removeTabViewItem(with identifier: Any) {
         let index = indexOfTabViewItem(withIdentifier: identifier)
-        if index == NSNotFound {return }
+        if index == NSNotFound { return }
         let item = tabViewItem(at: index)
         removeTabViewItem(item)
     }

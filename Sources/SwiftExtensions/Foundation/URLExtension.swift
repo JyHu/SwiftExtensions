@@ -102,6 +102,14 @@ public extension URL {
         components?.query = params.toURLQueryParams()
         return components?.url ?? self
     }
+    
+    func getPath() -> String {
+        if #available(macOS 13.0, *) {
+            return path()
+        } else {
+            return self.path
+        }
+    }
 }
 
 #endif
