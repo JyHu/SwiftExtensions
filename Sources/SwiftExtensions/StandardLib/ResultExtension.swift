@@ -13,7 +13,7 @@ public extension Result {
         }
     }
     
-    var result: Any? {
+    var result: Success? {
         switch self {
         case .success(let object): return object
         default: return nil

@@ -151,7 +151,13 @@ public extension String {
         }
         
         if range.lowerBound == startIndex {
-            return replacingCharacters(in: range, with: relativePath)
+            let target = replacingCharacters(in: range, with: "")
+            
+            if target.hasPrefix("/") {
+                return relativePath + target
+            } else {
+                return relativePath + "/" + target
+            }
         }
         
         return self

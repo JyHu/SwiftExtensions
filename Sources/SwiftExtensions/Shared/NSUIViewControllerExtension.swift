@@ -40,7 +40,7 @@ public extension NSUIViewController {
         view.gridLayout(with: config, creation: creation)
     }
     
-    func layout(subViews: [NSView], constraints: [NSLayoutConstraint]) {
+    func layout(subViews: [NSUIView], constraints: [NSLayoutConstraint]) {
         view.layout(subViews: subViews, constraints: constraints)
     }
 }

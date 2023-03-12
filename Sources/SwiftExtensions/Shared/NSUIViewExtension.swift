@@ -210,7 +210,7 @@ public extension SubViewLayoutProtocol where Self: NSUIView {
         }
     }
     
-    func layout(subViews: [NSView], constraints: [NSLayoutConstraint]) {
+    func layout(subViews: [NSUIView], constraints: [NSLayoutConstraint]) {
         for subView in subViews {
             if subView.superview == nil {
                 addSubview(subView)
@@ -264,4 +264,46 @@ public extension NSUIView {
     }
 }
 
+#if canImport(Cocoa) || canImport(UIKit)
+
+public extension NSUIView {
+    convenience init(subView: NSUIView, insets: NSUIEdgeInsets = .zero, saftyLayout: Bool = true) {
+        self.init(frame: CGRectMake(0, 0, 100, 100))
+        self.layout(subView: subView, insets: insets, saftyLayout: saftyLayout)
+    }
+    
+    convenience init(subView view: NSUIView, padding: CGFloat, saftyLayout: Bool = true) {
+        self.init(frame: CGRectMake(0, 0, 100, 100))
+        layout(subView: view, insets: NSUIEdgeInsets(top: padding, left: padding, bottom: padding, right: padding), saftyLayout: saftyLayout)
+    }
+    
+    convenience init(centerSubView view: NSUIView, horizontalPadding: CGFloat = 0, verticalPadding: CGFloat = 0, saftyLayout: Bool = false) {
+        self.init(frame: CGRectMake(0, 0, 100, 100))
+        layoutCenter(subView: view, horizontalPadding: horizontalPadding, verticalPadding: verticalPadding, saftyLayout: saftyLayout)
+    }
+    
+    convenience init(subViews: [String: NSUIView], vfls: [String], metrics: [String: Any] = [:], options: NSLayoutConstraint.FormatOptions = .directionMask) {
+        self.init(frame: CGRectMake(0, 0, 100, 100))
+        self.layout(subViews: subViews, vfls: vfls, metrics: metrics, options: options)
+    }
+    
+    convenience init(gridConfig: NSUIView.GridConfig? = nil, creation: (Int, Int) -> NSUIView) {
+        self.init(frame: CGRectMake(0, 0, 100, 100))
+        self.gridLayout(with: gridConfig, creation: creation)
+    }
+    
+    convenience init(subViews: [NSUIView], constraintsMaker: ((_ superView: NSUIView) -> [NSLayoutConstraint])) {
+        self.init(frame: CGRectMake(0, 0, 100, 100))
+        self.layout(subViews: subViews, constraints: constraintsMaker(self))
+    }
+    
+    convenience init(subViews: [NSUIView], constraints: [NSLayoutConstraint]) {
+        self.init(frame: CGRectMake(0, 0, 100, 100))
+        self.layout(subViews: subViews, constraints: constraints)
+    }
+}
+
 #endif
+
+#endif
+

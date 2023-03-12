@@ -104,11 +104,15 @@ public extension URL {
     }
     
     func getPath() -> String {
-        if #available(macOS 13.0, *) {
+        if #available(macOS 13.0, iOS 16.0, *) {
             return path()
         } else {
             return self.path
         }
+    }
+    
+    func relativePath(to url: URL) -> String {
+        return getPath().relate(to: url.getPath(), relativePath: "~")
     }
 }
 

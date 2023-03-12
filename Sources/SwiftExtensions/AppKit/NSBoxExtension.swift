@@ -5,6 +5,8 @@
 //  Created by Jo on 2022/11/25.
 //
 
+#if canImport(Cocoa)
+
 import Cocoa
 
 public extension NSBox {
@@ -15,3 +17,5 @@ public extension NSBox {
         self.title = title
     }
 }
+
+#endif
