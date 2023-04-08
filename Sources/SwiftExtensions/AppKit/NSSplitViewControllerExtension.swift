@@ -10,6 +10,8 @@
 import AppKit
 
 public extension NSSplitViewController {
+    
+    /// 分栏视图的方向，是否是垂直的
     var isVertical: Bool {
         set {
             splitView.isVertical = newValue

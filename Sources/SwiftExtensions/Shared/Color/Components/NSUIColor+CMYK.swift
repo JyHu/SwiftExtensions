@@ -48,12 +48,24 @@ public extension NSUIColor {
         var black: CGFloat = 1.0
         var alpha: CGFloat = 1.0
         
+        #if os(macOS)
         if self.colorSpace == .deviceCMYK {
             getCyan(&cyan, magenta: &magenta, yellow: &yellow, black: &black, alpha: &alpha)
         } else {
             usingColorSpace(.deviceCMYK)?
                 .getCyan(&cyan, magenta: &magenta, yellow: &yellow, black: &black, alpha: &alpha)
         }
+        #else
+        if cgColor.colorSpace?.name == CGColorSpace.genericCMYK,
+           let components = cgColor.components,
+           components.count == 5 {
+            cyan = components[0]
+            magenta = components[1]
+            yellow = components[2]
+            black = components[3]
+            alpha = components[4]
+        }
+        #endif
         
         return CMYKComponents(cyan: cyan, magenta: magenta, yellow: yellow, black: black, alpha: alpha)
     }

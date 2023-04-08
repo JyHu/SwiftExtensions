@@ -10,6 +10,14 @@
 import AppKit
 
 public extension NSTableColumn {
+    
+    /// 初始化方法
+    /// - Parameters:
+    ///   - identifier: 列标识符
+    ///   - title: 列标题
+    ///   - minWidth: 列最小宽度
+    ///   - maxWidth: 列最大宽度
+    ///   - width: 默认列宽
     convenience init(identifier: NSUserInterfaceItemIdentifier, title: String, minWidth: CGFloat? = nil, maxWidth: CGFloat? = nil, width: CGFloat? = nil) {
         self.init(identifier: identifier)
         self.title = title

@@ -70,6 +70,7 @@ public extension NSUIColor {
                 alpha: hsbComponents.alpha
             )
         } else if let cmykComponents = components as? NSUIColor.CMYKComponents {
+            #if os(macOS)
             self.init(
                 deviceCyan: cmykComponents.cyan,
                 magenta: cmykComponents.magenta,
@@ -77,6 +78,27 @@ public extension NSUIColor {
                 black: cmykComponents.black,
                 alpha: cmykComponents.alpha
             )
+            #else
+            func createCGColor() -> CGColor {
+                if #available(iOS 13.0, *) {
+                    return CGColor(genericCMYKCyan: cmykComponents.cyan, magenta: cmykComponents.magenta, yellow: cmykComponents.yellow, black: cmykComponents.black, alpha: cmykComponents.alpha)
+                } else {
+                    let components = [
+                        cmykComponents.cyan,
+                        cmykComponents.magenta,
+                        cmykComponents.yellow,
+                        cmykComponents.black,
+                        cmykComponents.alpha
+                    ]
+                    
+                    return CGColor(colorSpace: CGColorSpaceCreateDeviceCMYK(), components: components)!
+                }
+            }
+            
+            let cgcolor = createCGColor()
+            
+            self.init(cgColor: cgcolor)
+            #endif
         } else if let cmyComponents = components as? CMYComponents {
             self.init(components: cmyComponents.toCMYKComponents())
         } else if let hslComponents = components as? HSLComponents {

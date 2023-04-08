@@ -99,9 +99,7 @@ public extension NSUIColor {
         var G: CGFloat = 0
         var B: CGFloat = 0
         var alpha: CGFloat = 0
-        
-        usingColorSpace(.deviceRGB)?
-            .getRed(&R, green: &G, blue: &B, alpha: &alpha)
+        getRed(&R, green: &G, blue: &B, alpha: &alpha)
         return RGBComponents(R: R, G: G, B: B, alpha: alpha)
     }
 }

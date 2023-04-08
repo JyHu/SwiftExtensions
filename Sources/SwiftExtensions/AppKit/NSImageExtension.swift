@@ -73,6 +73,48 @@ public extension NSImage {
         
         return rotatedImage;
     }
+    
+    /// 缩放图片到指定大小
+    /// - Parameters:
+    ///   - width: 缩小的宽度，以宽度比例等比缩放
+    ///   - roundedCornerRadius: 新图片的圆角半径
+    ///   - roundedCornerRate: 新图片半径比例，以缩放后的图片的宽高最小值来算半径
+    /// - Returns: 处理后的图片
+    func stretch(to width: CGFloat, roundedCornerRadius: CGFloat? = nil, roundedCornerRate: CGFloat? = nil) -> NSImage {
+        if size.width == width { return self }
+        let height = width * size.height / size.width
+        
+        func getRadius() -> CGFloat? {
+            if let roundedCornerRadius, roundedCornerRadius > 0 {
+                return roundedCornerRadius
+            }
+            
+            if let roundedCornerRate, roundedCornerRate <= 0.5 {
+                return min(width, height) * roundedCornerRate
+            }
+            
+            return nil
+        }
+        
+        return NSImage(size: NSMakeSize(width, height), flipped: true) { dstRect in
+            if let radius = getRadius() {
+                NSBezierPath(roundedRect: dstRect, xRadius: radius, yRadius: radius).addClip()
+                
+            }
+            self.draw(in: dstRect)
+            return true
+        }
+    }
+    
+    /// 圆角处理图片
+    func roundedCorner(with radius: CGFloat) -> NSImage {
+        if radius < 0 { return self }
+        return NSImage(size: size, flipped: true) { dstRect in
+            NSBezierPath(roundedRect: dstRect, xRadius: radius, yRadius: radius).addClip()
+            self.draw(in: dstRect)
+            return true
+        }
+    }
 }
 
 #endif
