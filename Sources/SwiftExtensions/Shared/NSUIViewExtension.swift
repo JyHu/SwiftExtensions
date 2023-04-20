@@ -225,6 +225,15 @@ public extension SubViewLayoutProtocol where Self: NSUIView {
             constraint.isActive = true
         }
     }
+    
+    func constraint(size: CGSize) {
+        if translatesAutoresizingMaskIntoConstraints {
+            translatesAutoresizingMaskIntoConstraints = false
+        }
+        
+        widthAnchor.constraint(equalToConstant: size.width).isActive = true
+        heightAnchor.constraint(equalToConstant: size.height).isActive = true
+    }
 }
 
 public extension NSUIView {

@@ -200,6 +200,22 @@ public extension String {
         }
     }
     
+    func replacingOccurrences(of keyword: String, with replacement: String, options: CompareOptions = [], maxReplacements: Int) -> String {
+        var count = 0
+        var result = self
+        
+        while let range = result.range(of: keyword, options: options) {
+            result = result.replacingCharacters(in: range, with: replacement)
+            count += 1
+            
+            if count == maxReplacements {
+                return result
+            }
+        }
+        
+        return result
+    }
+    
     mutating func append(pathComponent: String) {
         if hasSuffix("/") {
             if pathComponent.hasPrefix("/") {
@@ -218,7 +234,7 @@ public extension String {
     
     /// 去除字符串开头结尾的空白字符
     var trimming: String {
-        return trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
+        return trimmingCharacters(in: .whitespacesAndNewlines)
     }
     
     /// 获取当前字符串的range对象
@@ -238,6 +254,13 @@ public extension String {
         let endIndex = index(startIndex, offsetBy: nsrange.length)
         return startIndex ..< endIndex
     }
+    
+    var wordCount: Int {
+        guard let regex = try? NSRegularExpression(pattern: "\\w+") else { return 0 }
+        return regex.numberOfMatches(in: self, range: NSMakeRange(0, count))
+    }
+    
+    var asURL: URL? { URL(string: self) }
 }
 
 public extension String {

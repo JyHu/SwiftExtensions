@@ -31,53 +31,21 @@ public extension Bundle {
     }
 }
 
-public class AppInfo {
-    private struct Entry {
-        var value: String?
-    }
-    
-    private static var shared = AppInfo()
-    private init() { }
-    
-    private var shortVersionEntry: Entry?
-    private var versionEntry: Entry?
-    private var nameEntry: Entry?
-    private var identifierEntry: Entry?
-    
-    public static var shortVersion: String? {
-        if let entry = shared.shortVersionEntry {
-            return entry.value
+public extension Bundle {
+    func decode<T: Decodable>(_ type: T.Type, from fileName: String, decoder: JSONDecoder = JSONDecoder()) -> T {
+        guard let json = url(forResource: fileName, withExtension: nil) else {
+            fatalError("Failed to locate \(fileName) in app bundle")
         }
         
-        shared.shortVersionEntry = Entry(value: Bundle.main.shortVersionString)
-        return shared.shortVersionEntry?.value
-    }
-    
-    public static var version: String? {
-        if let entry = shared.versionEntry {
-            return entry.value
+        guard let jsonData = try? Data(contentsOf: json) else {
+            fatalError("Failed to load \(fileName) from app bundle")
         }
         
-        shared.versionEntry = Entry(value: Bundle.main.version)
-        return shared.versionEntry?.value
-    }
-    
-    public static var name: String? {
-        if let entry = shared.nameEntry {
-            return entry.value
+        guard let result = try? decoder.decode(T.self, from: jsonData) else {
+            fatalError("Failed to decode \(fileName) from app bundle")
         }
         
-        shared.nameEntry = Entry(value: Bundle.main.name)
-        return shared.nameEntry?.value
-    }
-    
-    public static var identifier: String? {
-        if let entry = shared.identifierEntry {
-            return entry.value
-        }
-        
-        shared.identifierEntry = Entry(value: Bundle.main.identifier)
-        return shared.identifierEntry?.value
+        return result
     }
 }
 
