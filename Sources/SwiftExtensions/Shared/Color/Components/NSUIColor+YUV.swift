@@ -15,11 +15,11 @@ import UIKit
 
 public extension NSUIColor {
     struct YUVComponents {
-        public private(set) var componentsType: NSUIColor.ComponentsType = .YUV
+        public let componentsType: NSUIColor.ComponentsType = .YUV
         
-        public var luma: CGFloat
-        public var chroma1: CGFloat
-        public var chroma2: CGFloat
+        public let luma: CGFloat
+        public let chroma1: CGFloat
+        public let chroma2: CGFloat
         
         public init(luma: CGFloat, chroma1: CGFloat, chroma2: CGFloat) {
             self.luma = luma
@@ -46,7 +46,7 @@ extension NSUIColor.YUVComponents: NSUIColorComponentsProtocol {
         let G = luma - 0.3946101641414141437 * U - 0.5805003156565656797 * V
         let B = luma + 2.0319996843434342537 * U - 4.813762626262513e-04 * V
         
-        return NSUIColor.RGBComponents(R: R, G: G, B: B)
+        return NSUIColor.RGBComponents(red: R, green: G, blue: B)
     }
 }
 

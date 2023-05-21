@@ -31,30 +31,28 @@ internal extension NSUIColor.RGBComponents {
     }
     
     func toCMYComponents() -> NSUIColor.CMYComponents {
-        return NSUIColor.CMYComponents(cyan: 1 - R, magenta: 1 - G, yellow: 1 - B)
+        return NSUIColor.CMYComponents(cyan: 1 - red, magenta: 1 - green, yellow: 1 - blue)
     }
     
     func toCMYKComponents() -> NSUIColor.CMYKComponents {
-        let C: CGFloat = 1 - R
-        let M: CGFloat = 1 - G
-        let Y: CGFloat = 1 - B
-        let K: CGFloat = min(min(C, M), Y)
+        let k = max(red, green, blue)
         
-        if K == 1 {
+        if k == 1 {
             return NSUIColor.CMYKComponents(cyan: 0, magenta: 0, yellow: 0, black: 1)
         }
         
         return NSUIColor.CMYKComponents(
-            cyan: (C - K) / (1 - K),
-            magenta: (M - K) / (1 - K),
-            yellow: (Y - K) / (1 - K),
-            black: K
+            cyan: (1 - red - k) / (1 - k),
+            magenta: (1 - green - k) / (1 - k),
+            yellow: (1 - blue - k) / (1 - k),
+            black: k,
+            alpha: alpha
         )
     }
     
     func toHSBComponents() -> NSUIColor.HSBComponents {
-        let maxVal = max(max(R, G), B)
-        let minVal = min(min(R, G), B)
+        let maxVal = max(max(red, green), blue)
+        let minVal = min(min(red, green), blue)
         
         let delta = maxVal - minVal
         let V = maxVal
@@ -66,12 +64,12 @@ internal extension NSUIColor.RGBComponents {
         let S = delta / maxVal
         var H: CGFloat = 0
         
-        if R == maxVal {
-            H = (G - B) / delta / 6
-        } else if (G == maxVal) {
-            H = (2 + (B - R) / delta) / 6
+        if red == maxVal {
+            H = (green - blue) / delta / 6
+        } else if (green == maxVal) {
+            H = (2 + (blue - red) / delta) / 6
         } else {
-            H = (4 + (R - G) / delta) / 6
+            H = (4 + (red - green) / delta) / 6
         }
         
         if H < 0 {
@@ -82,8 +80,8 @@ internal extension NSUIColor.RGBComponents {
     }
     
     func toHSLComponents() -> NSUIColor.HSLComponents {
-        let maxVal = max(max(R, G), B)
-        let minVal = min(min(R, G), B)
+        let maxVal = max(max(red, green), blue)
+        let minVal = min(min(red, green), blue)
         
         let delta = maxVal - minVal
         let sumVal = maxVal + minVal
@@ -97,12 +95,12 @@ internal extension NSUIColor.RGBComponents {
         let S = delta / (sumVal < 1 ? sumVal : 2 - sumVal)
         var H: CGFloat = 0
         
-        if R == maxVal {
-            H = (G - B) / delta / 6
-        } else if (G == maxVal) {
-            H = (2 + (B - R) / delta) / 6
+        if red == maxVal {
+            H = (green - blue) / delta / 6
+        } else if (green == maxVal) {
+            H = (2 + (blue - red) / delta) / 6
         } else {
-            H = (4 + (R - G) / delta) / 6
+            H = (4 + (red - green) / delta) / 6
         }
         
         if H < 0 {
@@ -113,41 +111,41 @@ internal extension NSUIColor.RGBComponents {
     }
     
     func toYUVComponents() -> NSUIColor.YUVComponents {
-        let Y =  0.298839 * R + 0.586811 * G + 0.114350 * B;
-        let U = -0.147    * R - 0.289    * G + 0.436    * B + 0.5;
-        let V =  0.615    * R - 0.515    * G - 0.100    * B + 0.5;
+        let Y =  0.298839 * red + 0.586811 * green + 0.114350 * blue;
+        let U = -0.147    * red - 0.289    * green + 0.436    * blue + 0.5;
+        let V =  0.615    * red - 0.515    * green - 0.100    * blue + 0.5;
         
         return NSUIColor.YUVComponents(luma: Y, chroma1: U, chroma2: V)
     }
     
     func toYCbCrComponents() -> NSUIColor.YCbCrComponents {
-        let Y  =  0.298839 * R + 0.586811 * G + 0.114350 * B;
-        let Cb = -0.168737 * R - 0.331264 * G + 0.500000 * B + 0.5;
-        let Cr =  0.500000 * R - 0.418688 * G - 0.081312 * B + 0.5;
+        let Y  =  0.298839 * red + 0.586811 * green + 0.114350 * blue;
+        let Cb = -0.168737 * red - 0.331264 * green + 0.500000 * blue + 0.5;
+        let Cr =  0.500000 * red - 0.418688 * green - 0.081312 * blue + 0.5;
         
         return NSUIColor.YCbCrComponents(luminance: Y, blue: Cb, red: Cr)
     }
     
     func toYDbDrComponents() -> NSUIColor.YDbDrComponents {
-        let Y  =  0.298839 * R + 0.586811 * G + 0.114350 * B
-        let Db = -0.450    * R - 0.883    * G + 1.333    * B + 0.5
-        let Dr = -1.333    * R + 1.116    * G + 0.217    * B + 0.5
+        let Y  =  0.298839 * red + 0.586811 * green + 0.114350 * blue
+        let Db = -0.450    * red - 0.883    * green + 1.333    * blue + 0.5
+        let Dr = -1.333    * red + 1.116    * green + 0.217    * blue + 0.5
         
         return NSUIColor.YDbDrComponents(luminance: Y, blue: Db, red: Dr)
     }
     
     func toYPbPrComponents() -> NSUIColor.YPbPrComponents {
-        let Y  =  0.298839 * R + 0.586811 * G + 0.114350 * B
-        let Pb = -0.168737 * R - 0.331264 * G + 0.500000 * B + 0.5
-        let Pr =  0.500000 * R - 0.418688 * G - 0.081312 * B + 0.5
+        let Y  =  0.298839 * red + 0.586811 * green + 0.114350 * blue
+        let Pb = -0.168737 * red - 0.331264 * green + 0.500000 * blue + 0.5
+        let Pr =  0.500000 * red - 0.418688 * green - 0.081312 * blue + 0.5
         
         return NSUIColor.YPbPrComponents(luminance: Y, blue: Pb, red: Pr)
     }
     
     func toYIQComponents() -> NSUIColor.YIQComponents {
-        let Y = 0.298839 * R + 0.586811 * G + 0.114350 * B
-        let I = 0.595716 * R - 0.274453 * G - 0.321263 * B + 0.5
-        let Q = 0.211456 * R - 0.522591 * G + 0.311135 * B + 0.5
+        let Y = 0.298839 * red + 0.586811 * green + 0.114350 * blue
+        let I = 0.595716 * red - 0.274453 * green - 0.321263 * blue + 0.5
+        let Q = 0.211456 * red - 0.522591 * green + 0.311135 * blue + 0.5
         
         return NSUIColor.YIQComponents(brightness: Y, inPhase: I, quadraturePhase: Q)
     }

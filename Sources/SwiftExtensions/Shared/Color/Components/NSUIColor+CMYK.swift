@@ -15,22 +15,22 @@ import UIKit
 
 public extension NSUIColor {
     struct CMYKComponents {
-        public private(set) var componentsType: NSUIColor.ComponentsType = .CMYK
+        public let componentsType: NSUIColor.ComponentsType = .CMYK
         
         /// The cyan component value of the color.
         /// Display as %0 ~ 100%, the value is 0 ~ 1
-        public var cyan: CGFloat
+        public let cyan: CGFloat
         /// The magenta component value of the color.
         /// Display as %0 ~ 100%, the value is 0 ~ 1
-        public var magenta: CGFloat
+        public let magenta: CGFloat
         /// The yellow component value of the color.
         /// Display as %0 ~ 100%, the value is 0 ~ 1
-        public var yellow: CGFloat
+        public let yellow: CGFloat
         /// The black component value of the color.
         /// Display as %0 ~ 100%, the value is 0 ~ 1
-        public var black: CGFloat
+        public let black: CGFloat
         /// The alpha component value of the color.
-        public var alpha: CGFloat = 1
+        public let alpha: CGFloat
         
         public init(cyan: CGFloat, magenta: CGFloat, yellow: CGFloat, black: CGFloat, alpha: CGFloat = 1) {
             self.cyan = cyan
@@ -42,32 +42,7 @@ public extension NSUIColor {
     }
     
     var cmykComponents: CMYKComponents {
-        var cyan: CGFloat = 1.0
-        var magenta: CGFloat = 1.0
-        var yellow: CGFloat = 1.0
-        var black: CGFloat = 1.0
-        var alpha: CGFloat = 1.0
-        
-        #if os(macOS)
-        if self.colorSpace == .deviceCMYK {
-            getCyan(&cyan, magenta: &magenta, yellow: &yellow, black: &black, alpha: &alpha)
-        } else {
-            usingColorSpace(.deviceCMYK)?
-                .getCyan(&cyan, magenta: &magenta, yellow: &yellow, black: &black, alpha: &alpha)
-        }
-        #else
-        if cgColor.colorSpace?.name == CGColorSpace.genericCMYK,
-           let components = cgColor.components,
-           components.count == 5 {
-            cyan = components[0]
-            magenta = components[1]
-            yellow = components[2]
-            black = components[3]
-            alpha = components[4]
-        }
-        #endif
-        
-        return CMYKComponents(cyan: cyan, magenta: magenta, yellow: yellow, black: black, alpha: alpha)
+        return rgbComponents.toCMYKComponents()
     }
 }
 
@@ -78,9 +53,9 @@ extension NSUIColor.CMYKComponents: NSUIColorComponentsProtocol {
     
     public func toBridgeComponents() -> NSUIColorComponentsProtocol {
         return NSUIColor.RGBComponents(
-            R: (1 - cyan) * (1 - black),
-            G: (1 - magenta) * (1 - black),
-            B: (1 - yellow) * (1 - black)
+            red: (1 - cyan) * (1 - black),
+            green: (1 - magenta) * (1 - black),
+            blue: (1 - yellow) * (1 - black)
         )
     }
     

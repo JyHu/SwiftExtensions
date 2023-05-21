@@ -36,14 +36,14 @@ public extension Dictionary {
     ///     }
     /// ]
     ///
-    /// let value = dict["key1", "key2", "key3"]
+    /// let value = dict[path: ["key1", "key2", "key3"]]
     ///
-    subscript(path: [Key]) -> Any? {
+    subscript(path pathItems: [Key]) -> Any? {
         get {
-            guard !path.isEmpty else { return nil }
+            guard !pathItems.isEmpty else { return nil }
             
             var result: Any? = self
-            for key in path {
+            for key in pathItems {
                 guard let element = (result as? [Key: Any])?[key] else {
                     return nil
                 }
@@ -54,19 +54,26 @@ public extension Dictionary {
             return result
         }
         set {
-            guard let currentKey = path.first else {
+            guard let currentKey = pathItems.first else {
                 return
             }
             
-            if path.count == 1, let new = newValue as? Value {
+            if pathItems.count == 1, let new = newValue as? Value {
                 return self[currentKey] = new
             }
             
             if var children = self[currentKey] as? [Key: Any] {
-                children[Array(path.dropFirst())] = newValue
+                children[path: Array(pathItems.dropFirst())] = newValue
                 return self[currentKey] = children as? Value
             }
         }
+    }
+    
+    ///
+    /// dict[path: "k1/k2/k3/k4"]
+    subscript(path route: String, separtor: String = "/") -> Any? {
+        guard let components = route.components(separatedBy: separtor).map({ String($0) }) as? [Key] else { return nil }
+        return self[path: components]
     }
 }
 
@@ -135,6 +142,21 @@ public extension Dictionary {
 }
 
 public extension Dictionary where Value: Comparable, Value: Hashable {
+    ///
+    /// [
+    ///   "a": "f",
+    ///   "b": "f",
+    ///   "c": "g",
+    ///   "d": "h",
+    ///   "e": "h"
+    /// ]
+    ///
+    /// --->
+    /// [
+    ///   "f": ["a", "b"],
+    ///   "g": ["c"],
+    ///   "h": ["d", "e"]
+    /// ]
     func groupedByValues() -> [Value: [Key]] {
         var converted: [Value: [Key]] = [:]
         for (key, value) in self {
@@ -147,6 +169,28 @@ public extension Dictionary where Value: Comparable, Value: Hashable {
 }
 
 public extension Dictionary {
+    
+    ///
+    /// let dict0: [String: Any] = [
+    ///     "aa": "1",
+    ///     "ab": "2",
+    ///     "bc": "3",
+    ///     "bd": "4",
+    ///     "ee": "5",
+    ///     "eg": "6"
+    /// ]
+    ///
+    /// let res0 = dict0.grouped { key, _ in
+    ///     return String(describing: key.first!)
+    /// }
+    ///
+    /// --->
+    /// [
+    ///     "a": ["aa": "1", "ab": "2"],
+    ///     "e": ["ee": "5", "eg": "6"],
+    ///     "b": ["bd": "4", "bc": "3"]
+    /// ]
+    ///
     func grouped<GroupKey>(convert: (Key, Value) -> GroupKey) -> [GroupKey: [Key: Value]] where GroupKey: Hashable {
         var converted: [GroupKey: [Key: Value]] = [:]
         for (key, value) in self {
@@ -156,11 +200,5 @@ public extension Dictionary {
             converted[groupKey] = cachedGroup
         }
         return converted
-    }
-}
-
-public extension Dictionary where Key: StringProtocol {
-    func toURLQueryParams() -> String {
-        return map { "\($0.key)=\($0.value)" }.joined(separator: "&")
     }
 }

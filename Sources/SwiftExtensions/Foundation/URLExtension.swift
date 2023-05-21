@@ -9,8 +9,8 @@
 
 import Foundation
 
-public extension URL {
 #if os(macOS)
+public extension URL {
     func bookmarkData() throws -> Data {
         return try bookmarkData(options: .withSecurityScope, includingResourceValuesForKeys: nil, relativeTo: nil)
     }
@@ -48,8 +48,49 @@ public extension URL {
         
         return url
     }
+}
 #endif
+
+///
+/// 在 macOS 13.0, iOS 16.0, tvOS 16.0, watchOS 9.0 下，
+/// 通过带有 percentEncoded 参数的方法获取相关属性会崩溃，目前
+/// Foundation框架内暂无修复，只能通过使用老方法来获取
+///
+public extension URL {
+    func getHost(percentEncoded: Bool = true) -> String? {
+        return host
+    }
     
+    func getUser(percentEncoded: Bool = true) -> String? {
+        return user
+    }
+    
+    func getPassword(percentEncoded: Bool = true) -> String? {
+        return password
+    }
+    
+    func getPath(percentEncoded: Bool = true) -> String {
+        return path
+    }
+    
+    func getQuery(percentEncoded: Bool = true) -> String? {
+        return query
+    }
+    
+    func getFragment(percentEncoded: Bool = true) -> String? {
+        return fragment
+    }
+    
+    func hostAndPath(percentEncoded: Bool = true) -> String {
+        let path = getPath(percentEncoded: percentEncoded)
+        if let host = getHost(percentEncoded: percentEncoded) {
+            return host + "/" + path
+        }
+        return path
+    }
+}
+
+public extension URL {
     var queryParams: [String: String]? {
         guard let components = URLComponents(url: self, resolvingAgainstBaseURL: false),
               let queryItems = components.queryItems else {
@@ -66,7 +107,7 @@ public extension URL {
     }
     
     var fragmentParams: [String: String]? {
-        guard let fragment = fragment, !fragment.isEmpty else {
+        guard let fragment = getFragment(), !fragment.isEmpty else {
             return nil
         }
         
@@ -84,7 +125,7 @@ public extension URL {
     
     func resetFragment(with params: [String: String]) -> URL {
         var components = URLComponents(url: self, resolvingAgainstBaseURL: true)
-        components?.fragment = params.toURLQueryParams()
+        components?.fragment = params.toURLQuery()
         return components?.url ?? self
     }
     
@@ -99,16 +140,8 @@ public extension URL {
     
     func resetQuery(with params: [String: String]) -> URL {
         var components = URLComponents(url: self, resolvingAgainstBaseURL: true)
-        components?.query = params.toURLQueryParams()
+        components?.query = params.toURLQuery()
         return components?.url ?? self
-    }
-    
-    func getPath() -> String {
-        if #available(macOS 13.0, iOS 16.0, *) {
-            return path()
-        } else {
-            return self.path
-        }
     }
     
     func relativePath(to url: URL) -> String {

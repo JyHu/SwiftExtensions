@@ -16,63 +16,71 @@ import UIKit
 public extension NSUIColor {
     
     struct RGBComponents {
-        public private(set) var componentsType: NSUIColor.ComponentsType = .RGB
+        public let componentsType: NSUIColor.ComponentsType = .RGB
 
         /// The red component value, 0 ~ 255
-        public var R: CGFloat
+        public let R: UInt
         /// The green component value, 0 ~ 255
-        public var G: CGFloat
+        public let G: UInt
         /// The blue component value, 0 ~ 255
-        public var B: CGFloat
+        public let B: UInt
         
         /// The red component value, 0 ~ 1
-        public var red: Int
+        public let red: CGFloat
         /// The green component value, 0 ~ 1
-        public var green: Int
+        public let green: CGFloat
         /// The blue component value, 0 ~ 1
-        public var blue: Int
+        public let blue: CGFloat
         
         /// The alpha component value, 0 ~ 1
-        public var alpha: CGFloat = 1
+        public let alpha: CGFloat
         
-        public var hexValue: UInt
-        public var hexString: String
+        public let hexValue: UInt
+        public let hexString: String
         
-        public init(R: CGFloat, G: CGFloat, B: CGFloat, alpha: CGFloat = 1) {
+        public init(R: UInt, G: UInt, B: UInt, alpha: CGFloat = 1) {
             self.R = R
             self.G = G
             self.B = B
             
-            red = Int(R * 255)
-            green = Int(G * 255)
-            blue = Int(B * 255)
+            self.red = CGFloat(R) / 255
+            self.green = CGFloat(G) / 255
+            self.blue = CGFloat(B) / 255
             
             self.alpha = alpha
-            self.hexValue = (((UInt(red) << 8) + UInt(green)) << 8) + UInt(blue)
-            self.hexString = String(format: "#%02X%02X%02X", red, green, blue)
+            self.hexValue = (((R << 8) + G) << 8) + B
+            self.hexString = String(format: "#%02X%02X%02X", R, G, B)
         }
         
-        public init(red: Int, green: Int, blue: Int, alpha: CGFloat = 1) {
-            self.init(hexValue: UInt((((red << 8) + green) << 8) + blue), alpha: alpha)
+        public init(red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat = 1) {
+            self.R = UInt(red * 255)
+            self.G = UInt(green * 255)
+            self.B = UInt(blue * 255)
+            
+            self.red = red
+            self.green = green
+            self.blue = blue
+            
+            self.alpha = alpha
+            self.hexValue = (UInt(R << 8) + G) << 8 + B
+            self.hexString = String(format: "#%02X%02X%02X", R, G, B)
         }
         
         public init(hexValue: UInt, alpha: CGFloat = 1) {
-            self.hexValue = hexValue
+            self.R = UInt(hexValue >> 16)
+            self.G = UInt((hexValue >> 8) & 0xFF)
+            self.B = UInt(hexValue & 0xFF)
+            
+            self.red = CGFloat(R) / 255.0
+            self.green = CGFloat(G) / 255.0
+            self.blue = CGFloat(B) / 255.0
             
             self.alpha = alpha
-            
-            red = Int(hexValue >> 16)
-            green = Int((hexValue >> 8) & 0xFF)
-            blue = Int(hexValue & 0xFF)
-            
-            R = CGFloat(red) / 255.0
-            G = CGFloat(green) / 255.0
-            B = CGFloat(blue) / 255.0
-            
-            hexString = String(format: "#%02X%02X%02X", red, green, blue)
+            self.hexValue = hexValue
+            self.hexString = String(format: "#%02X%02X%02X", R, G, B)
         }
         
-        public init(hexString: String) {
+        public init?(hexString: String) {
             func getOffset() -> Int {
                 if hexString.hasPrefix("0x") || hexString.hasPrefix("0X") {
                     return 2
@@ -82,6 +90,10 @@ public extension NSUIColor {
                 }
                 return 0
             }
+            
+            let offset = getOffset()
+            
+            guard hexString.count == offset + 6 else { return nil }
             
             let startIndex = hexString.index(hexString.startIndex, offsetBy: getOffset())
             let scannedHex = hexString[startIndex ..< hexString.endIndex]
@@ -95,12 +107,12 @@ public extension NSUIColor {
     
     /// Convert the color object to RGB Components value.
     var rgbComponents: RGBComponents {
-        var R: CGFloat = 0
-        var G: CGFloat = 0
-        var B: CGFloat = 0
+        var red: CGFloat = 0
+        var green: CGFloat = 0
+        var blue: CGFloat = 0
         var alpha: CGFloat = 0
-        getRed(&R, green: &G, blue: &B, alpha: &alpha)
-        return RGBComponents(R: R, G: G, B: B, alpha: alpha)
+        getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+        return RGBComponents(red: red, green: green, blue: blue, alpha: alpha)
     }
 }
 

@@ -48,7 +48,7 @@ public extension NSTabView {
     ///   - viewController: 需要添加的viewController
     ///   - title: tab标题
     ///   - identifier: tab标识
-    func addTabbed(viewController: NSViewController, title: String? = nil, identifier: Any? = nil) {
+    func addTabbed(viewController: NSViewController, title: String? = nil, identifier: NSUserInterfaceItemIdentifier? = nil) {
         let tabItem = NSTabViewItem(viewController: viewController)
         
         if let title = title {
@@ -67,7 +67,7 @@ public extension NSTabView {
     ///   - view: 需要添加的view视图
     ///   - title: tab标题
     ///   - identifier: tab标识
-    func addTabbed(view: NSView, title: String? = nil, identifier: Any? = nil) {
+    func addTabbed(view: NSView, title: String? = nil, identifier: NSUserInterfaceItemIdentifier? = nil) {
         let tabItem = NSTabViewItem(identifier: identifier)
         if let title = title {
             tabItem.label = title
@@ -84,29 +84,29 @@ public extension NSTabView {
         }
     }
     
-    func removeTabViewItem(with identifier: Any) {
+    func removeTabViewItem(with identifier: NSUserInterfaceItemIdentifier) {
         let index = indexOfTabViewItem(withIdentifier: identifier)
         if index == NSNotFound { return }
         let item = tabViewItem(at: index)
         removeTabViewItem(item)
     }
     
-    func selectTabViewItem(with identifier: Any) {
+    func selectTabViewItem(with identifier: NSUserInterfaceItemIdentifier) {
         guard let index = indexOfTabViewItem(with: identifier) else { return }
         selectTabViewItem(at: index)
     }
     
-    func containsTabViewItem(with identifier: Any) -> Bool {
+    func containsTabViewItem(with identifier: NSUserInterfaceItemIdentifier) -> Bool {
         return indexOfTabViewItem(withIdentifier: identifier) != NSNotFound
     }
     
-    func indexOfTabViewItem(with identifier: Any) -> Int? {
+    func indexOfTabViewItem(with identifier: NSUserInterfaceItemIdentifier) -> Int? {
         let index = indexOfTabViewItem(withIdentifier: identifier)
         if index == NSNotFound { return nil }
         return index
     }
     
-    func tabViewItem(with identifier: Any) -> NSTabViewItem? {
+    func tabViewItem(with identifier: NSUserInterfaceItemIdentifier) -> NSTabViewItem? {
         guard let index = indexOfTabViewItem(with: identifier) else { return nil }
         return tabViewItems[index]
     }

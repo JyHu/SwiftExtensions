@@ -286,12 +286,30 @@ public extension String {
 }
 
 public extension String {
+    /// 将一个普通的字符串转换为utf8二进制数据
     func toUTF8Data(allowLossyConversion: Bool = false) -> Data? {
         return data(using: .utf8, allowLossyConversion: false)
     }
     
-    func toBase64Data(options: Data.Base64DecodingOptions = []) -> Data? {
+    /// 将一个base64字符串转换为二进制数据
+    func base64StringToData(options: Data.Base64DecodingOptions = []) -> Data? {
         return Data(base64Encoded: self, options: options)
+    }
+    
+    /// 将一个base64字符串转换为一个普通的字符串
+    func base64StringToString(options: Data.Base64DecodingOptions = [], encoding: String.Encoding = .utf8) -> String? {
+        guard let data = base64StringToData(options: options) else { return nil }
+        return String(data: data, encoding: encoding)
+    }
+    
+    /// 将一个普通的字符串转换为一个base64的二进制数据
+    func toBase64String(options: Data.Base64EncodingOptions = []) -> String? {
+        return data(using: .utf8)?.base64EncodedString(options: options)
+    }
+    
+    /// 将一个普通的字符串转换为base64的二进制数据
+    func toBase64Data(encodingOptions: Data.Base64EncodingOptions = [], decodingOptions: Data.Base64DecodingOptions = []) -> Data? {
+        return toBase64String(options: encodingOptions)?.base64StringToData(options: decodingOptions)
     }
     
     func toHexData() -> Data? {

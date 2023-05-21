@@ -16,14 +16,14 @@ import UIKit
 
 public extension NSUIColor {
     struct YIQComponents {
-        public private(set) var componentsType: NSUIColor.ComponentsType = .YIQ
+        public let componentsType: NSUIColor.ComponentsType = .YIQ
         
         /// Y
-        public var brightness: CGFloat
+        public let brightness: CGFloat
         /// I
-        public var inPhase: CGFloat
+        public let inPhase: CGFloat
         /// Q
-        public var quadraturePhase: CGFloat
+        public let quadraturePhase: CGFloat
         
         public init(brightness: CGFloat, inPhase: CGFloat, quadraturePhase: CGFloat) {
             self.brightness = brightness
@@ -50,7 +50,7 @@ extension NSUIColor.YIQComponents: NSUIColorComponentsProtocol {
         let G = brightness - 0.2721220993185104464 * I - 0.6473805968256950427 * Q
         let B = brightness - 1.1069890167364901945 * I + 1.7046149983646481374 * Q
         
-        return NSUIColor.RGBComponents(R: R, G: G, B: B)
+        return NSUIColor.RGBComponents(red: R, green: G, blue: B)
     }
 }
 

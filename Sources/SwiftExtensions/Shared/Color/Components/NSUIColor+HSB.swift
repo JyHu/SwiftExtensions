@@ -15,19 +15,19 @@ import UIKit
 
 public extension NSUIColor {
     struct HSBComponents {
-        public private(set) var componentsType: NSUIColor.ComponentsType = .HSB
+        public let componentsType: NSUIColor.ComponentsType = .HSB
 
         /// The hue component of the color object.
         /// Display as degree, 0 ~ 360
-        public var hue: CGFloat
+        public let hue: CGFloat
         /// The saturation component of the color object.
         /// Display as 0% ~ 100%, the value is 0 ~ 1
-        public var saturation: CGFloat
+        public let saturation: CGFloat
         /// The brightness component of the color object. 0 ~ 1
         /// Display as 0% ~ 100%, the value is 0 ~ 1
-        public var brightness: CGFloat
+        public let brightness: CGFloat
         /// The opacity value of the color object.
-        public var alpha: CGFloat = 1
+        public let alpha: CGFloat
         
         public init(hue: CGFloat, saturation: CGFloat, brightness: CGFloat, alpha: CGFloat = 1) {
             self.hue = hue
@@ -57,7 +57,7 @@ extension NSUIColor.HSBComponents: NSUIColorComponentsProtocol {
     
     public func toBridgeComponents() -> NSUIColorComponentsProtocol {
         if saturation == 0 {
-            return NSUIColor.RGBComponents(R: brightness, G: brightness, B: brightness)
+            return NSUIColor.RGBComponents(red: brightness, green: brightness, blue: brightness)
         }
         
         let H = (hue == 1 ? 0 : hue) * 6
@@ -69,13 +69,13 @@ extension NSUIColor.HSBComponents: NSUIColorComponentsProtocol {
         let t = brightness * (1 - saturation * (1 - f))
         
         switch sextant {
-        case 0: return NSUIColor.RGBComponents(R: brightness, G: t, B: p)
-        case 1: return NSUIColor.RGBComponents(R: q, G: brightness, B: p)
-        case 2: return NSUIColor.RGBComponents(R: p, G: brightness, B: t)
-        case 3: return NSUIColor.RGBComponents(R: p, G: q, B: brightness)
-        case 4: return NSUIColor.RGBComponents(R: t, G: p, B: brightness)
-        case 5: return NSUIColor.RGBComponents(R: brightness, G: p, B: q)
-        default: return NSUIColor.RGBComponents(R: 0, G: 0, B: 0)
+        case 0: return NSUIColor.RGBComponents(red: brightness, green: t, blue: p)
+        case 1: return NSUIColor.RGBComponents(red: q, green: brightness, blue: p)
+        case 2: return NSUIColor.RGBComponents(red: p, green: brightness, blue: t)
+        case 3: return NSUIColor.RGBComponents(red: p, green: q, blue: brightness)
+        case 4: return NSUIColor.RGBComponents(red: t, green: p, blue: brightness)
+        case 5: return NSUIColor.RGBComponents(red: brightness, green: p, blue: q)
+        default: return NSUIColor.RGBComponents(red: 0, green: 0, blue: 0)
         }
     }
     

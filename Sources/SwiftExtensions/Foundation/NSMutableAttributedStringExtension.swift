@@ -16,8 +16,8 @@ import UIKit
 #endif
 
 public extension NSMutableAttributedString {
-    func append(_ string: String, attributes: [NSAttributedString.Key: Any] = [:]) {
-        append(NSAttributedString(string: string, attributes: attributes))
+    func append(_ string: Any, attributes: [NSAttributedString.Key: Any] = [:]) {
+        append(NSAttributedString(string: String(describing: string), attributes: attributes))
     }
     
 #if (canImport(AppKit) && !targetEnvironment(macCatalyst)) || canImport(UIKit)
@@ -26,13 +26,17 @@ public extension NSMutableAttributedString {
     }
 #endif
     
-    func addAttributes(_ attributes: [Key: Any]) {
-        addAttributes(attributes, range: NSMakeRange(0, length))
+    func addAttributes(_ attributes: [Key: Any], range: NSRange? = nil) {
+        addAttributes(attributes, range: range ?? NSMakeRange(0, length))
     }
     
-    func addAttribute(_ attribute: Key, value: Any) {
+    func addAttribute(_ attribute: Key, value: Any, range: NSRange? = nil) {
         addAttribute(attribute, value: value, range: NSMakeRange(0, length))
     }
+    
+//    func setAttributes(_ attributes: [Key: Any], range: NSRange? = nil) {
+//
+//    }
 }
 
 #endif

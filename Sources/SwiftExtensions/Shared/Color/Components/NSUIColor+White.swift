@@ -16,9 +16,9 @@ import UIKit
 public extension NSUIColor {
     struct WhiteComponents {
         /// The white component value of the color.
-        public var white: CGFloat
+        public let white: CGFloat
         /// The alpha (opacity) component value of the color.
-        public var alpha: CGFloat = 1
+        public let alpha: CGFloat
     }
     
     convenience init(whiteComponents: WhiteComponents) {

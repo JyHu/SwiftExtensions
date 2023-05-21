@@ -10,13 +10,13 @@
 import AppKit
 
 public extension NSTabViewItem {
-    convenience init(with view: NSView, identifier: Any?) {
+    convenience init(with view: NSView, identifier: NSUserInterfaceItemIdentifier?) {
         self.init()
         self.view = view
         self.identifier = identifier
     }
     
-    convenience init(with viewController: NSViewController, identifier: Any?) {
+    convenience init(with viewController: NSViewController, identifier: NSUserInterfaceItemIdentifier?) {
         self.init(viewController: viewController)
         self.identifier = identifier
     }

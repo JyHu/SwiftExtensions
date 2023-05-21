@@ -106,9 +106,9 @@ public extension NSUIColor {
         } else {
             let rgbComponents = (components.to(.RGB) as? RGBComponents) ?? RGBComponents(hexValue: 0x000000)
             self.init(
-                red: rgbComponents.R,
-                green: rgbComponents.G,
-                blue: rgbComponents.B,
+                red: rgbComponents.red,
+                green: rgbComponents.green,
+                blue: rgbComponents.blue,
                 alpha: rgbComponents.alpha
             )
         }

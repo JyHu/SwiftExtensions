@@ -15,19 +15,19 @@ import UIKit
 
 public extension NSUIColor {
     struct CMYComponents {
-        public private(set) var componentsType: NSUIColor.ComponentsType = .CMY
+        public let componentsType: NSUIColor.ComponentsType = .CMY
         
         /// The cyan component value of the color.
         /// Display as %0 ~ 100%, the value is 0 ~ 1
-        public var cyan: CGFloat
+        public let cyan: CGFloat
         /// The magenta component value of the color.
         /// Display as %0 ~ 100%, the value is 0 ~ 1
-        public var magenta: CGFloat
+        public let magenta: CGFloat
         /// The yellow component value of the color.
         /// Display as %0 ~ 100%, the value is 0 ~ 1
-        public var yellow: CGFloat
+        public let yellow: CGFloat
         /// The alpha component value of the color.
-        public var alpha: CGFloat = 1
+        public let alpha: CGFloat
         
         public init(cyan: CGFloat, magenta: CGFloat, yellow: CGFloat, alpha: CGFloat = 1) {
             self.cyan = cyan
@@ -38,7 +38,7 @@ public extension NSUIColor {
     }
     
     var cmyComponents: CMYComponents {
-        return cmykComponents.toCMYComponents()
+        return rgbComponents.toCMYComponents()
     }
 }
 
@@ -49,9 +49,9 @@ extension NSUIColor.CMYComponents: NSUIColorComponentsProtocol {
     
     public func toBridgeComponents() -> NSUIColorComponentsProtocol {
         return NSUIColor.RGBComponents(
-            R: (1 - cyan),
-            G: (1 - magenta),
-            B: (1 - yellow)
+            red: (1 - cyan),
+            green: (1 - magenta),
+            blue: (1 - yellow)
         )
     }
     

@@ -29,6 +29,14 @@ public extension NSApplication {
     @objc private func _smoothlyRunModal(for window: NSWindow) {
         runModal(for: window)
     }
+    
+    func containsWindow(with identifier: NSUserInterfaceItemIdentifier) -> Bool {
+        return windows.contains { $0.identifier == identifier }
+    }
+    
+    func window(with identifier: NSUserInterfaceItemIdentifier) -> NSWindow? {
+        return windows.first { $0.identifier == identifier }
+    }
 }
 
 #endif

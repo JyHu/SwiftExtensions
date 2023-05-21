@@ -15,11 +15,11 @@ public extension NSTabViewController {
         tabView.selectTabViewItem(at: index)
     }
     
-    func selectTabViewItem(with identifier: Any) {
+    func selectTabViewItem(with identifier: NSUserInterfaceItemIdentifier) {
         tabView.selectTabViewItem(with: identifier)
     }
     
-    func tabViewItem(of identifier: Any) -> NSTabViewItem? {
+    func tabViewItem(of identifier: NSUserInterfaceItemIdentifier) -> NSTabViewItem? {
         return tabView.tabViewItem(with: identifier)
     }
 }

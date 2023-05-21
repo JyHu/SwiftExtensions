@@ -16,14 +16,14 @@ import UIKit
 
 public extension NSUIColor {
     struct YDbDrComponents {
-        public private(set) var componentsType: NSUIColor.ComponentsType = .YDbDr
+        public let componentsType: NSUIColor.ComponentsType = .YDbDr
         
         /// Y
-        public var luminance: CGFloat
+        public let luminance: CGFloat
         /// Db
-        public var blue: CGFloat
+        public let blue: CGFloat
         /// Dr
-        public var red: CGFloat
+        public let red: CGFloat
         
         public init(luminance: CGFloat, blue: CGFloat, red: CGFloat) {
             self.luminance = luminance
@@ -50,7 +50,7 @@ extension NSUIColor.YDbDrComponents: NSUIColorComponentsProtocol {
         let G = luminance - 0.12913289889050927 * Db + 0.26789932820759876 * Dr;
         let B = luminance + 0.66467905997895482 * Db - 7.9202543533108e-05 * Dr;
         
-        return NSUIColor.RGBComponents(R: R, G: G, B: B)
+        return NSUIColor.RGBComponents(red: R, green: G, blue: B)
     }
 }
 
