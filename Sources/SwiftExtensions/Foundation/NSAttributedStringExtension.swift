@@ -33,6 +33,10 @@ public extension NSAttributedString {
                 mutableAttributedString.append(attributedString)
             } else if let attachment = element as? NSTextAttachment {
                 mutableAttributedString.append(NSAttributedString(attachment: attachment))
+            } else if let subSources = element as? [Any] {
+                if let subAttr = subSources.toAttributedString(attributes: attributes, imageOffsetCreator: imageOffsetCreator) {
+                    mutableAttributedString.append(subAttr)
+                }
             } else {
                 mutableAttributedString.append("\(element)")
             }
@@ -68,6 +72,16 @@ public extension NSAttributedString {
     }
 }
 #endif
+
+public extension NSAttributedString {
+    class var lineFeed: Self {
+        return self.init(string: "\n")
+    }
+    
+    class var empty: Self {
+        return self.init(string: "")
+    }
+}
 
 public extension NSAttributedString {
     func applying(attributes: [Key: Any]) -> NSAttributedString {
@@ -106,6 +120,24 @@ public extension NSAttributedString {
     
     static func + (lhs: NSAttributedString, rhs: String) -> NSMutableAttributedString {
         return lhs + NSAttributedString(string: rhs)
+    }
+    
+    func appending(_ string: String?, attributes: [NSAttributedString.Key: Any] = [:]) -> Self {
+        guard let string, !string.isEmpty else { return self }
+        return appending(NSAttributedString(string: string, attributes: attributes))
+    }
+    
+    func appending(_ attributedString: NSAttributedString) -> Self {
+        func getMutableAttributedString() -> NSMutableAttributedString {
+            if let mutable = self as? NSMutableAttributedString {
+                return mutable
+            }
+            return NSMutableAttributedString(attributedString: self)
+        }
+        
+        let mutableAttributedString = getMutableAttributedString()
+        mutableAttributedString.append(attributedString)
+        return mutableAttributedString as! Self
     }
 }
 

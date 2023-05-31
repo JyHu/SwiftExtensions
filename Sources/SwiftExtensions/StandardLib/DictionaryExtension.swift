@@ -18,6 +18,11 @@ public extension Dictionary {
         return index(forKey: key) != nil
     }
     
+    /// Get all keys in a dictionary.
+    var allKeys: [Key] {
+        return keys.map { $0 }
+    }
+    
     /// Remove all values of the given keys.
     /// - Parameter keys: The keys to be removed.
     mutating func removeAll<S: Sequence>(keys: S) where S.Element == Key {

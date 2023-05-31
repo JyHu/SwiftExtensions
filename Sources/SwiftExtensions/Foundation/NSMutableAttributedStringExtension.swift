@@ -17,7 +17,11 @@ import UIKit
 
 public extension NSMutableAttributedString {
     func append(_ string: Any, attributes: [NSAttributedString.Key: Any] = [:]) {
-        append(NSAttributedString(string: String(describing: string), attributes: attributes))
+        if let string = string as? String {
+            append(NSAttributedString(string: string, attributes: attributes))
+        } else if let attrStr = string as? NSAttributedString {
+            append(attrStr)
+        }
     }
     
 #if (canImport(AppKit) && !targetEnvironment(macCatalyst)) || canImport(UIKit)
@@ -26,17 +30,25 @@ public extension NSMutableAttributedString {
     }
 #endif
     
-    func addAttributes(_ attributes: [Key: Any], range: NSRange? = nil) {
-        addAttributes(attributes, range: range ?? NSMakeRange(0, length))
+    func addAttributes(_ attributes: [Key: Any]) {
+        addAttributes(attributes, range: NSMakeRange(0, length))
     }
     
-    func addAttribute(_ attribute: Key, value: Any, range: NSRange? = nil) {
+    func addAttribute(_ attribute: Key, value: Any) {
         addAttribute(attribute, value: value, range: NSMakeRange(0, length))
     }
     
-//    func setAttributes(_ attributes: [Key: Any], range: NSRange? = nil) {
-//
-//    }
+    func replace(tag: String, with attributedString: NSAttributedString) {
+        let range = NSString(string: string).range(of: tag)
+        if range.location == NSNotFound { return }
+        replaceCharacters(in: range, with: attributedString)
+    }
+    
+    func replace(tag: String, with text: String) {
+        let range = NSString(string: string).range(of: tag)
+        if range.location == NSNotFound { return }
+        replaceCharacters(in: range, with: text)
+    }
 }
 
 #endif

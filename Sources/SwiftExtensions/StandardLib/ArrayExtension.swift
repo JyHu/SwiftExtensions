@@ -23,7 +23,7 @@ public extension Array where Element: Equatable {
     /// - Parameter object: The removed object
     /// - Returns: Removed index
     @discardableResult
-    mutating func removeObject<T: Equatable>(object: T) -> Index? {
+    mutating func remove<T: Equatable>(object: T) -> Index? {
         var index: Int?
         for (idx, objectToCompare) in enumerated() {
             if let to = objectToCompare as? T, object == to {
@@ -50,6 +50,28 @@ public extension Array where Element: Equatable {
             }
         }
         return results
+    }
+}
+
+public extension Array {
+    /// 获取给定索引的数据
+    /// - Parameter indexes: 索引列表
+    /// - Returns: 对应的数据列表
+    func objects(at indexes: IndexSet) -> [Element] {
+        var results: [Element] = []
+        for (index, element) in enumerated() {
+            if indexes.contains(index) {
+                results.append(element)
+            }
+        }
+
+        return results
+    }
+}
+
+public extension Array where Element: Any {
+    func toAttributedString(attributes: [NSAttributedString.Key: Any] = [:], imageOffsetCreator: ((NSUIImage, Int) -> CGPoint)? = nil) -> NSMutableAttributedString? {
+        return NSMutableAttributedString(sources: self, attributes: attributes, imageOffsetCreator: imageOffsetCreator)
     }
 }
 

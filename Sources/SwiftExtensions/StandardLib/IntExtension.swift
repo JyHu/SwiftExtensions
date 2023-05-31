@@ -7,23 +7,20 @@
 
 import Foundation
 
-public extension Int {
+private let __lowerChar = "0123456789abcdef"
+private let __upperChar = "0123456789ABCDEF"
+
+public extension BinaryInteger {
     var numberOfDigits: Int {
         var num = self
         var res: Int = 0
-        while num > 0 {
+        while num != 0 {
             res += 1
             num /= 10
         }
         
         return res
     }
-}
-
-private let lowerChar = "0123456789abcdef"
-private let upperChar = "0123456789ABCDEF"
-
-public extension UInt64 {
     
     /// 将uint64转成hex string
     /// - Parameters:
@@ -31,15 +28,13 @@ public extension UInt64 {
     ///   - length: 限定长度，比如转换后的结果是 A44 ，需要显示成 0x00000A44 ，则限定长度为8即可，会自动的补0
     ///   - uppercase: hex string是否大写，
     /// - Returns: 转换后的 hex string 结果
-    func hexString(prefix: String = "",
-                   length: Int = 0,
-                   uppercase: Bool = false) -> String {
+    func hexString(prefix: String = "", length: Int = 0, uppercase: Bool = false) -> String {
         var hex = ""
         var num = self
         
         /// 将值转换成16进制的字符
         func getchar() -> Character? {
-            return (uppercase ? upperChar : lowerChar).char(at: Int(num % 16))
+            return (uppercase ? __upperChar : __lowerChar).char(at: Int(num % 16))
         }
         
         /// 限定转换结果长度，自动补0

@@ -14,10 +14,13 @@ public extension NSPopUpButton {
     func addItem(with title: String, toolTip: String? = nil, representedObject: Any? = nil) -> NSMenuItem? {
         addItem(withTitle: title)
         
-        let menuItem = item(withTitle: title)
-        menuItem?.toolTip = toolTip
-        menuItem?.representedObject = representedObject
-        return menuItem
+        if let menuItem = item(withTitle: title) {
+            menuItem.toolTip = toolTip
+            menuItem.representedObject = representedObject
+            return menuItem
+        }
+        
+        return nil
     }
     
     func selectedItemRepresentedObject<T>() -> T? {

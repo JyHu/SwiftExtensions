@@ -12,7 +12,7 @@ final class FileManagerTests: XCTestCase {
     func testExample() throws {
         XCTAssertTrue(FileManager.documentDirectory?.hasSuffix("Documents") ?? false)
         XCTAssertTrue(FileManager.cacheDirectory?.hasSuffix("Caches") ?? false)
-        XCTAssertTrue(FileManager.documentDirectory(with: "test")?.hasSuffix("Documents/test") ?? false)
-        XCTAssertTrue(FileManager.cacheDirectory(with: "test")?.hasSuffix("Caches/test") ?? false)
+        XCTAssertTrue(FileManager.default.documentDirectory(with: "test")?.hasSuffix("Documents/test") ?? false)
+        XCTAssertTrue(FileManager.default.cacheDirectory(with: "test")?.hasSuffix("Caches/test") ?? false)
     }
 }

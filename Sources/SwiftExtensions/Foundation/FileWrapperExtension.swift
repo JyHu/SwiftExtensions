@@ -59,17 +59,17 @@ public extension FileWrapper {
     /// 使用wrapper文件名读取对应的plist数据
     /// - Parameter representedFileName: wrapper名
     /// - Returns: plist文件对应的json数据
-    func propertyList(with representedFileName: String, options: PropertyListSerialization.MutabilityOptions = []) -> Any? {
+    func propertyList(with representedFileName: String, options: PropertyListSerialization.MutabilityOptions = []) throws -> Any? {
         guard let data = regularFileContents else { return nil }
-        return try? data.toPropertyList(options: options)
+        return try data.toPropertyList(options: options)
     }
     
     /// 使用wrapper文件名读取对应的json数据
     /// - Parameter representedFileName: wrapper名
     /// - Returns: json文件对应的json数据
-    func jsonObject(with representedFileName: String, options: JSONSerialization.ReadingOptions) -> Any? {
+    func jsonObject(with representedFileName: String, options: JSONSerialization.ReadingOptions) throws -> Any? {
         guard let data = regularFileContents else { return nil }
-        return try? data.toJsonObject(options: options)
+        return try data.toJsonObject(options: options)
     }
     
     func stringValue(encoding: String.Encoding) -> String? {
