@@ -142,7 +142,7 @@ public extension NSAttributedString {
 }
 
 public extension Array where Element: NSAttributedString {
-    func joined(separator: NSAttributedString) -> NSAttributedString {
+    func attributedStringByJoined(separator: NSAttributedString) -> NSAttributedString {
         guard let firstElement = first else {
             return NSMutableAttributedString(string: "")
         }
@@ -151,8 +151,8 @@ public extension Array where Element: NSAttributedString {
         return dropFirst().reduce(result) { $0 + separator + $1 }
     }
     
-    func joined(separator: String) -> NSAttributedString {
-        return joined(separator: NSAttributedString(string: separator))
+    func attributedStringByJoined(separator: String) -> NSAttributedString {
+        return attributedStringByJoined(separator: NSAttributedString(string: separator))
     }
 }
 
