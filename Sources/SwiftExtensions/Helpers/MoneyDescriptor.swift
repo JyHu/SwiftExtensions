@@ -34,17 +34,10 @@ import Foundation
 
 public extension Double {
     /// 将金额转换为展示的字符串
-    /// - Parameter style: 展示内容的格式
-    /// - Returns: 格式化后的金额
-    func convertToEnglishMoney(style: MoneyDecimal.EnglishStyle = .cents) throws -> String? {
-        return try MoneyDecimal(money: self).convertToEnglishMoney(style: style)
-    }
-    
-    /// 将金额转换为展示的中文大写
-    /// - Parameter allowsZero: 在出现连续的0时，是否需要在转换后的内容也带上“零”
-    /// - Returns: 转换后的大写金额
-    func convertToChinaMoney(allowsZero: Bool = true) throws -> String? {
-        return try MoneyDecimal(money: self).convertToChinaMoney(allowsZero: allowsZero)
+    /// - Parameter language: 需要转换到的语言
+    /// - Returns: 转换的结果
+    func amountInWords(_ language: MoneyDecimal.Language) throws -> String? {
+        return try MoneyDecimal(money: self).amountInWords(language)
     }
 }
 
@@ -286,21 +279,36 @@ private extension UInt {
 }
 
 public extension MoneyDecimal {
-    
-    /// 转换为英文时的格式
-    enum EnglishStyle {
-        /// 美分
-        case cents
-        /// 美点
-        case point
-        /// 分数
-        case percent
+    enum Language {
+        /// 转换为英文时的格式
+        public enum EnglishStyle {
+            /// 美分
+            case cents
+            /// 美点
+            case point
+            /// 分数
+            case percent
+        }
+        
+        /// 中文
+        case chinese(allowsZero: Bool = true)
+        /// 英文
+        case english(style: EnglishStyle = .cents)
     }
     
+    func amountInWords(_ language: Language) throws -> String? {
+        switch language {
+        case .chinese(let allowsZero): return try convertToChinaMoney(allowsZero: allowsZero)
+        case .english(let style): return try convertToEnglishMoney(style: style)
+        }
+    }
+}
+
+private extension MoneyDecimal {
     /// 将金额转换为展示的字符串
     /// - Parameter style: 展示内容的格式
     /// - Returns: 格式化后的金额
-    func convertToEnglishMoney(style: EnglishStyle = .cents) throws -> String? {
+    func convertToEnglishMoney(style: Language.EnglishStyle = .cents) throws -> String? {
         if integer == 0 && decimal == 0 { return nil }
         
         if integer == 0 {

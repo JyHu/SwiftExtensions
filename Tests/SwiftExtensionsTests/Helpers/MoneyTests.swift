@@ -25,8 +25,8 @@ final class MoneyTests: XCTestCase {
         // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
         // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
         
-        print(try MoneyDecimal(integer: 32430904824, decimal: 3).convertToChinaMoney())
-        print(try MoneyDecimal(money: 13600000001.06).convertToEnglishMoney())
+        print(try MoneyDecimal(integer: 32430904824, decimal: 3).amountInWords(.chinese()))
+        print(try MoneyDecimal(money: 13600000001.06).amountInWords(.english()))
         
     }
 
