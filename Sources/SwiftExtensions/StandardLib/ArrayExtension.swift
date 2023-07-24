@@ -80,3 +80,21 @@ public extension Array where Element: Hashable {
         return Set(self)
     }
 }
+
+public extension Array where Element: Comparable {
+    func differenceSet(from other: [Element]) -> (newest: [Element], oldest: [Element], intersection: [Element]) {
+        var mutableSelf = self
+        var mutableOther = other
+        var intersections: [Element] = []
+        
+        for ele in mutableSelf {
+            if other.contains(ele) {
+                mutableSelf.remove(object: ele)
+                mutableOther.remove(object: ele)
+                intersections.append(ele)
+            }
+        }
+        
+        return (mutableOther, mutableSelf, intersections)
+    }
+}

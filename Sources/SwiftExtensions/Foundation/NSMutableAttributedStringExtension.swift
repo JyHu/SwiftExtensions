@@ -49,6 +49,10 @@ public extension NSMutableAttributedString {
         if range.location == NSNotFound { return }
         replaceCharacters(in: range, with: text)
     }
+    
+    func appendLineFeed() {
+        append(.lineFeed)
+    }
 }
 
 #endif
