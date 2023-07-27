@@ -42,7 +42,7 @@ public extension NSAttributedString {
             }
         }
         
-        if mutableAttributedString.length == 0 {
+        if mutableAttributedString.length != 0 {
             if !attributes.isEmpty {
                 mutableAttributedString.addAttributes(attributes)
             }
