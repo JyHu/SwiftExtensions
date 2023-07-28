@@ -23,7 +23,7 @@ public extension FileWrapper {
     /// - Parameters:
     ///   - data: 文件数据
     ///   - preferredFilename: 文件名
-    func addRegularFile(_ data: Data, preferredFilename: String) {
+    func addFileWrapper(with data: Data, preferredFilename: String) {
         /// 使用文件数据创建一个wrapper
         let wrapper = FileWrapper(regularFileWithContents: data)
         wrapper.preferredFilename = preferredFilename
@@ -60,21 +60,33 @@ public extension FileWrapper {
     /// - Parameter representedFileName: wrapper名
     /// - Returns: plist文件对应的json数据
     func propertyList(with representedFileName: String, options: PropertyListSerialization.MutabilityOptions = []) throws -> Any? {
-        guard let data = regularFileContents else { return nil }
-        return try data.toPropertyList(options: options)
+        return try fileWrappers?[representedFileName]?.propertyList(options: options)
     }
     
     /// 使用wrapper文件名读取对应的json数据
     /// - Parameter representedFileName: wrapper名
     /// - Returns: json文件对应的json数据
     func jsonObject(with representedFileName: String, options: JSONSerialization.ReadingOptions) throws -> Any? {
-        guard let data = regularFileContents else { return nil }
-        return try data.toJsonObject(options: options)
+        return try fileWrappers?[representedFileName]?
+            .regularFileContents?
+            .toJsonObject(options: options)
     }
     
-    func stringValue(encoding: String.Encoding) -> String? {
+    func stringValue(with representedFileName: String, encoding: String.Encoding = .utf8) -> String? {
+        return fileWrappers?[representedFileName]?.stringValue(encoding: encoding)
+    }
+    
+    func propertyList(options: PropertyListSerialization.MutabilityOptions = []) throws -> Any? {
+        return try regularFileContents?.toPropertyList(options: options)
+    }
+    
+    func jsonObject(options: JSONSerialization.ReadingOptions) throws -> Any? {
+        return try regularFileContents?.toJsonObject(options: options)
+    }
+    
+    func stringValue(encoding: String.Encoding = .utf8) -> String? {
         guard let data = regularFileContents else { return nil }
-        return String(data: data, encoding: .utf8)
+        return String(data: data, encoding: encoding)
     }
 }
 

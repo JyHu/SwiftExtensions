@@ -21,6 +21,12 @@ public extension NSSplitViewController {
         }
     }
     
+    /// 添加一个视图控制器到split viewController
+    /// - Parameters:
+    ///   - viewController: 需要添加的ViewController
+    ///   - minThickness: 最小压缩尺寸
+    ///   - maxThickness: 最大拉伸尺寸
+    /// - Returns: 添加后的splitItem
     @discardableResult
     func add(_ viewController: NSViewController, minThickness: CGFloat? = nil, maxThickness: CGFloat? = nil) -> NSSplitViewItem {
         let splitItem = NSSplitViewItem(viewController: viewController)

@@ -36,11 +36,26 @@ public extension NSObject {
         item.submenu = subMenu
         return item
     }
+    
+    /// 创建一个菜单
+    /// - Parameter items: 菜单项列表
+    /// - Returns: 创建的菜单
+    func createMenu(with items: NSMenuItem ...) -> NSMenu {
+        let menu = NSMenu()
+        for item in items {
+            menu.addItem(item)
+        }
+        return menu
+    }
 }
 
 public extension NSMenu {
     func item(withIdentifier identifier: NSUserInterfaceItemIdentifier) -> NSMenuItem? {
         return items.first(where: { $0.identifier == identifier })
+    }
+    
+    func item(withIdentifier identifier: String) -> NSMenuItem? {
+        return items.first(where: { $0.identifier?.rawValue == identifier })
     }
     
     @discardableResult
@@ -68,6 +83,14 @@ public extension NSMenuItem {
         self.target = target
         self.toolTip = toolTip
         self.representedObject = representedObject
+    }
+    
+    func subItem(withIdentifier identifier: NSUserInterfaceItemIdentifier) -> NSMenuItem? {
+        return submenu?.item(withIdentifier: identifier)
+    }
+
+    func subItem(withIdentifier identifier: String) -> NSMenuItem? {
+        return submenu?.item(withIdentifier: identifier)
     }
 }
 

@@ -12,6 +12,10 @@ public extension Collection {
     subscript(safe index: Index) -> Element? {
         startIndex <= index && index < endIndex ? self[index] : nil
     }
+    
+    var isNotEmpty: Bool {
+        return !isEmpty
+    }
 }
 
 public extension StringProtocol {

@@ -15,6 +15,20 @@ import UIKit
 public typealias NSUIColor = UIColor
 #endif
 
+/// 根据给定的RGB值创建一个颜色对象
+/// - Parameters:
+///   - R: red
+///   - green: green
+///   - blue: blue
+///   - alpha: alpha
+/// - Returns: Color
+public func RGBA(_ red: Int,
+                 _ green: Int,
+                 _ blue: Int,
+                 _ alpha: CGFloat = 1.0) -> NSUIColor {
+    return NSUIColor(R: red, G: green, B: blue, alpha: alpha)
+}
+
 public extension NSUIColor {
     
     /// Create color object using RGBA channel values

@@ -212,13 +212,7 @@ public extension SubViewLayoutProtocol where Self: NSUIView {
     
     func layout(subViews: [NSUIView], constraints: [NSLayoutConstraint]) {
         for subView in subViews {
-            if subView.superview == nil {
-                addSubview(subView)
-            }
-            
-            if subView.translatesAutoresizingMaskIntoConstraints {
-                subView.translatesAutoresizingMaskIntoConstraints = false
-            }
+            addAutoLayout(subView: subView)
         }
         
         for constraint in constraints {

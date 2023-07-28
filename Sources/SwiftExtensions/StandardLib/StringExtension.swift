@@ -66,6 +66,14 @@ public extension String {
         return String(self[start ..< end])
     }
     
+    func subString(from index: Int) -> String? {
+        return self[index...]
+    }
+    
+    func subString(to index: Int) -> String? {
+        return self[...index]
+    }
+    
     func subStringWith(pattern: String) -> String? {
         guard let range = range(of: pattern, options: .regularExpression) else {
             return nil
@@ -102,6 +110,45 @@ public extension String {
         }
         
         return nextRange(from: startIndex, result: [])
+    }
+    
+    func nsranges(of string: String, options: NSString.CompareOptions = []) -> [NSRange] {
+        if options == .regularExpression {
+            return textCheckingResults(with: string).map { $0.range }
+        }
+        
+        let nsstring = NSString(string: self)
+        
+        func nextRange(from beginIndex: Int, result: [NSRange]) -> [NSRange] {
+            if beginIndex >= count {
+                return result
+            }
+            
+            let range = nsstring.range(of: string, options: options, range: NSRange(location: beginIndex, length: count - beginIndex))
+            
+            if range.location != NSNotFound {
+                return nextRange(from: range.location + range.length, result: result + [range])
+            }
+            
+            return nextRange(from: beginIndex + string.count, result: result)
+        }
+        
+        return nextRange(from: 0, result: [])
+    }
+    
+    /// 获取给定的字符串在当前字符串的位置
+    /// - Parameters:
+    ///   - subString: 要判断的字符串
+    ///   - backwards: 是否从后面开始搜索，如果backwards参数设置为true，则返回最后出现的位置，默认false
+    /// - Returns: 搜索结果，如果搜索不到，则返回-1
+    func position(of subString: String, backwards: Bool = false) -> Int {
+        // 如果没有找到就返回-1
+        if let range = range(of: subString, options: backwards ? .backwards : .literal) {
+            if !range.isEmpty {
+                return distance(from: startIndex, to: range.lowerBound)
+            }
+        }
+        return -1
     }
 }
 
@@ -151,7 +198,7 @@ public extension String {
         }
         
         if range.lowerBound == startIndex {
-            let target = replacingCharacters(in: range, with: "")
+            let target = replacingCharacters(in: range, with: relativePath)
             
             if target.hasPrefix("/") {
                 return relativePath + target
@@ -344,5 +391,28 @@ public extension String {
         }
         
         return Data(bytes: bytes, count: bytes.count)
+    }
+}
+
+public extension String {
+    /// 添加自定义的富文本属性
+    /// - Parameter attributes: 富文本属性列表
+    /// - Returns: 处理后的富文本
+    func attributed(_ attributes: [NSAttributedString.Key: Any] = [:]) -> NSMutableAttributedString {
+        if attributes.isEmpty {
+            return NSMutableAttributedString(string: self)
+        }
+
+        return NSMutableAttributedString(string: self, attributes: attributes)
+    }
+    
+    func hypertextLinkTo(_ link: Any, attributes: [NSAttributedString.Key: Any] = [:]) -> NSMutableAttributedString {
+        if attributes.count == 0 {
+            return attributed([.link: link])
+        }
+        
+        var attributes = attributes
+        attributes[.link] = link
+        return attributed(attributes)
     }
 }

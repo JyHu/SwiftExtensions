@@ -23,5 +23,10 @@ final class StringTests: XCTestCase {
         XCTAssertEqual(str[10...], "d")
         XCTAssertNil(str[11...])
         XCTAssertEqual(str[6...], "world")
+        
+        let str2 = "abcabcabcabcabcabcabc"
+        let ranges = str2.nsranges(of: "abc")
+        print(ranges)
+        
     }
 }
