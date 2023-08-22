@@ -126,11 +126,11 @@ public extension String {
             
             let range = nsstring.range(of: string, options: options, range: NSRange(location: beginIndex, length: count - beginIndex))
             
-            if range.location != NSNotFound {
-                return nextRange(from: range.location + range.length, result: result + [range])
+            if range.location == NSNotFound {
+                return result
             }
             
-            return nextRange(from: beginIndex + string.count, result: result)
+            return nextRange(from: range.location + range.length, result: result + [range])
         }
         
         return nextRange(from: 0, result: [])
