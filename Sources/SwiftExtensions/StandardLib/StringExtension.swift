@@ -163,8 +163,8 @@ public extension String {
     ///   - target: 要替换成的字符串
     ///   - options: 替换方式，默认字符串匹配方式
     /// - Returns: 替换后的字符串
-    func replacing(_ string: String, target: String, options: NSString.CompareOptions = .caseInsensitive) -> String {
-        return replacingOccurrences(of: string, with: target, options: options, range: rangeValue)
+    func replacing(_ string: String, target: String, options: NSString.CompareOptions = .caseInsensitive, range: Range<Index>? = nil) -> String {
+        return replacingOccurrences(of: string, with: target, options: options, range: range)
     }
     
     private static let desensitizationReg = try? NSRegularExpression(pattern: "[\\.\\\\\\^\\$\\*\\+\\?\\[\\]\\{\\}\\(\\)\\|]", options: .caseInsensitive)
