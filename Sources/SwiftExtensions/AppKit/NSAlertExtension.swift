@@ -16,7 +16,11 @@ public extension NSAlert {
     ///   - informativeText: The alert's informative text.
     ///   - messageText: The alert's title.
     ///   - alertStyle: Indicates the alert’s severity level.
-    convenience init(informativeText: String, messageText: String? = nil, alertStyle: NSAlert.Style = .informational) {
+    convenience init(
+        informativeText: String,
+        messageText: String? = nil,
+        alertStyle: NSAlert.Style = .informational) {
+
         self.init()
         
         if let messageText = messageText {
@@ -39,7 +43,12 @@ public extension NSAlert {
     ///   - messageText: The alert title.
     ///   - alertStyle: The alert style.
     /// - Returns: Confirmed result.
-    @discardableResult static func alert(informativeText: String, messageText: String? = nil, alertStyle: NSAlert.Style = .informational) -> NSApplication.ModalResponse {
+    @discardableResult static func alert(
+        informativeText: String,
+        messageText: String? = nil,
+        alertStyle: NSAlert.Style = .informational
+    ) -> NSApplication.ModalResponse {
+        
         return NSAlert(
             informativeText: informativeText,
             messageText: messageText,
@@ -68,6 +77,7 @@ public extension NSAlert {
         confirmButtonTitle: String? = nil,
         cancelButtnTitle: String? = nil
     ) -> Bool {
+        
         let alert = NSAlert(informativeText: informativeText, messageText: messageText, alertStyle: alertStyle)
         alert.addButton(withTitle: confirmButtonTitle ?? "Confirm")
         alert.addButton(withTitle: cancelButtnTitle  ?? "Cancel")
@@ -85,6 +95,10 @@ public extension NSAlert {
                 self.runModal()
             }
         }
+    }
+    
+    func hideActionButtons() {
+        addButton(withTitle: "").isHidden = true
     }
 }
 
