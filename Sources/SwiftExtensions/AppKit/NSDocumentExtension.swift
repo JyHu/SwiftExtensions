@@ -44,7 +44,7 @@ public extension NSDocument {
     ///   - shouldCloseSelector: `func canClose(withDelegate:shouldClose:contextInfo:)`的参数
     ///   - contextInfo: `func canClose(withDelegate:shouldClose:contextInfo:)`的参数
     ///   - shouldClosed: 是否需要真正的关闭document窗口
-    public func performCloseDocumentAction(
+    func performCloseDocumentAction(
         withDelegate delegate: Any,
         shouldCloseSelector: Selector?,
         contextInfo: UnsafeMutableRawPointer?,

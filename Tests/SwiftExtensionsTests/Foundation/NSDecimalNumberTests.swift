@@ -20,4 +20,12 @@ final class NSDecimalNumberTests: XCTestCase {
         XCTAssertEqual(saftyEmptyNum, zeroNum)
         XCTAssertEqual(saftyZeroNum, zeroNum)
     }
+    
+    func testIncreaseDecrease() {
+        let decimalNumber = NSDecimalNumber(string: "1234.123")
+        let decimalValue = decimalNumber.decimalValue
+        let exponent = decimalValue.exponent
+        print(exponent)
+    }
 }
+

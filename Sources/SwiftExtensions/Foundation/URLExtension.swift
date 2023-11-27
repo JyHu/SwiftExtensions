@@ -11,8 +11,8 @@ import Foundation
 
 #if os(macOS)
 public extension URL {
-    func bookmarkData() throws -> Data {
-        return try bookmarkData(options: .withSecurityScope, includingResourceValuesForKeys: nil, relativeTo: nil)
+    func bookmarkData(options: URL.BookmarkCreationOptions = .withSecurityScope) throws -> Data {
+        return try bookmarkData(options: options, includingResourceValuesForKeys: nil, relativeTo: nil)
     }
     
     func bookmarkBase64EncodedString() throws -> String? {

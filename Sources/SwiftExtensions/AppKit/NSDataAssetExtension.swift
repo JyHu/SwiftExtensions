@@ -6,8 +6,12 @@
 //
 
 #if canImport(AppKit) && !targetEnvironment(macCatalyst)
-
 import AppKit
+#elseif canImport(UIKit) && canImport(MobileCoreServices)
+import UIKit
+import MobileCoreServices
+#endif
+
 import UniformTypeIdentifiers
 
 public extension NSDataAsset {
@@ -18,7 +22,7 @@ public extension NSDataAsset {
     }
     
     var objectValue: Any? {
-        if #available(macOS 11.0, *) {
+        if #available(iOS 14.0, macOS 11.0, *) {
             func isType(_ type: UTType) -> Bool {
                 return typeIdentifier == type.identifier
             }
@@ -63,6 +67,3 @@ public extension NSDataAsset {
         return nil
     }
 }
-
-
-#endif

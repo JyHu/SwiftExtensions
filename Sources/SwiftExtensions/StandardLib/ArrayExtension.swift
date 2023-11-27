@@ -38,19 +38,6 @@ public extension Array where Element: Equatable {
         
         return index
     }
-    
-    func grouping<T>(completion: (([Element], Bool) -> T?)) -> [T] {
-        var results: [T] = []
-        var tmpGroup: [Element] = []
-        for index in self.indices {
-            tmpGroup.append(self[index])
-            if let tmpRes = completion(tmpGroup, index == count - 1) {
-                results.append(tmpRes)
-                tmpGroup = []
-            }
-        }
-        return results
-    }
 }
 
 public extension Array {
