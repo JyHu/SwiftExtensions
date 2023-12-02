@@ -49,12 +49,13 @@ public struct MoneyDecimal {
         case excessive
     }
     
+    public let doubleValue: Double
     /// 金额的整数部分，最大不超过1e18
-    public private(set) var integer: UInt = 0
+    public let integer: UInt
     /// 金额的小数部分，默认只到分，即2位
-    public private(set) var decimal: UInt = 0
+    public let decimal: UInt
     /// 金额字符串，格式化后的2位小数的金额
-    public private(set) var moneyString: String
+    public let moneyString: String
     
     /// 初始化方法
     /// - Parameter money: 需要转换的金额数值
@@ -69,6 +70,8 @@ public struct MoneyDecimal {
         decimal = UInt(round((money - floorValue) * 100))
         
         moneyString = String(format: "%.2f", money)
+        
+        self.doubleValue = money
     }
     
     /// 初始化方法
@@ -84,6 +87,8 @@ public struct MoneyDecimal {
         } else {
             self.moneyString = String(format: "\(integer)%02d", decimal)
         }
+        
+        self.doubleValue = Double(integer) + Double(decimal) / 100
     }
     
     /// 初始化方法
