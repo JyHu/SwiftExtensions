@@ -59,11 +59,15 @@ public struct MoneyDecimal {
     /// 初始化方法
     /// - Parameter money: 需要转换的金额数值
     public init(money: Double) throws {
-        guard money < 1e18 else { throw DError.excessive }
+        guard money >= 0 && money < 1e18 else { throw DError.excessive }
         
-        let integerMoney = UInt(money * 100)
-        integer = integerMoney / 100
-        decimal = integerMoney % 100
+        /// 先向下取整
+        let floorValue = floor(money)
+        /// 转换整数部分
+        integer = UInt(floorValue)
+        /// 四舍五入获取整数部分
+        decimal = UInt(round((money - floorValue) * 100))
+        
         moneyString = String(format: "%.2f", money)
     }
     
@@ -74,6 +78,7 @@ public struct MoneyDecimal {
     public init(integer: UInt, decimal: UInt = 0) {
         self.integer = integer
         self.decimal = decimal
+        
         if decimal == 0 {
             self.moneyString = String(describing: integer)
         } else {
