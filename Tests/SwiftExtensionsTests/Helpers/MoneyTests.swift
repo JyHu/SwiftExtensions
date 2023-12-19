@@ -31,24 +31,24 @@ final class MoneyTests: XCTestCase {
         
         
         
-        XCTAssertEqual(try money1.amountInWords(.english(style: .cents, spelling: .capitalized)), "Thirty-Two Billion, Four Hundred And Thirty Million, Nine Hundred And Four Thousand, Eight Hundred And Twenty-Four And Cents Three Only")
-        XCTAssertEqual(try money1.amountInWords(.english(style: .cents, spelling: .caps)), "THIRTY-TWO BILLION, FOUR HUNDRED AND THIRTY MILLION, NINE HUNDRED AND FOUR THOUSAND, EIGHT HUNDRED AND TWENTY-FOUR AND CENTS THREE ONLY")
-        XCTAssertEqual(try money1.amountInWords(.english(style: .percent, spelling: .capitalized)), "Thirty-Two Billion, Four Hundred And Thirty Million, Nine Hundred And Four Thousand, Eight Hundred And Twenty-Four And Three 3/100 Only")
-        XCTAssertEqual(try money1.amountInWords(.english(style: .percent, spelling: .caps)), "THIRTY-TWO BILLION, FOUR HUNDRED AND THIRTY MILLION, NINE HUNDRED AND FOUR THOUSAND, EIGHT HUNDRED AND TWENTY-FOUR AND THREE 3/100 ONLY")
-        XCTAssertEqual(try money1.amountInWords(.english(style: .point, spelling: .capitalized)), "Thirty-Two Billion, Four Hundred And Thirty Million, Nine Hundred And Four Thousand, Eight Hundred And Twenty-Four And Point Three Only")
-        XCTAssertEqual(try money1.amountInWords(.english(style: .point, spelling: .caps)), "THIRTY-TWO BILLION, FOUR HUNDRED AND THIRTY MILLION, NINE HUNDRED AND FOUR THOUSAND, EIGHT HUNDRED AND TWENTY-FOUR AND POINT THREE ONLY")
+        XCTAssertEqual(try money1.amountInWords(.english(style: .cents, spelling: .capitalized)), "Thirty-Two Billion, Four Hundred And Thirty Million, Nine Hundred And Four Thousand, Eight Hundred And Twenty-Four Dollars And Cents Three")
+        XCTAssertEqual(try money1.amountInWords(.english(style: .cents, spelling: .caps)), "THIRTY-TWO BILLION, FOUR HUNDRED AND THIRTY MILLION, NINE HUNDRED AND FOUR THOUSAND, EIGHT HUNDRED AND TWENTY-FOUR DOLLARS AND CENTS THREE")
+        XCTAssertEqual(try money1.amountInWords(.english(style: .percent, spelling: .capitalized)), "Thirty-Two Billion, Four Hundred And Thirty Million, Nine Hundred And Four Thousand, Eight Hundred And Twenty-Four Dollars And Three 3/100")
+        XCTAssertEqual(try money1.amountInWords(.english(style: .percent, spelling: .caps)), "THIRTY-TWO BILLION, FOUR HUNDRED AND THIRTY MILLION, NINE HUNDRED AND FOUR THOUSAND, EIGHT HUNDRED AND TWENTY-FOUR DOLLARS AND THREE 3/100")
+        XCTAssertEqual(try money1.amountInWords(.english(style: .point, spelling: .capitalized)), "Thirty-Two Billion, Four Hundred And Thirty Million, Nine Hundred And Four Thousand, Eight Hundred And Twenty-Four Dollars And Point Three")
+        XCTAssertEqual(try money1.amountInWords(.english(style: .point, spelling: .caps)), "THIRTY-TWO BILLION, FOUR HUNDRED AND THIRTY MILLION, NINE HUNDRED AND FOUR THOUSAND, EIGHT HUNDRED AND TWENTY-FOUR DOLLARS AND POINT THREE")
         
         let money2 = try MoneyDecimal(money: 13600000001.06)
         
         XCTAssertEqual(try money2.amountInWords(.chinese(allowsZero: true)), "壹佰叁拾陆亿零陆分")
         XCTAssertEqual(try money2.amountInWords(.chinese(allowsZero: false)), "壹佰叁拾陆亿陆分")
         
-        XCTAssertEqual(try money2.amountInWords(.english(style: .cents, spelling: .capitalized)), "Thirteen Billion, Six Hundred Million, One And Cents Six Only")
-        XCTAssertEqual(try money2.amountInWords(.english(style: .cents, spelling: .caps)), "THIRTEEN BILLION, SIX HUNDRED MILLION, ONE AND CENTS SIX ONLY")
-        XCTAssertEqual(try money2.amountInWords(.english(style: .percent, spelling: .capitalized)), "Thirteen Billion, Six Hundred Million, One And Six 6/100 Only")
-        XCTAssertEqual(try money2.amountInWords(.english(style: .percent, spelling: .caps)), "THIRTEEN BILLION, SIX HUNDRED MILLION, ONE AND SIX 6/100 ONLY")
-        XCTAssertEqual(try money2.amountInWords(.english(style: .point, spelling: .capitalized)), "Thirteen Billion, Six Hundred Million, One And Point Six Only")
-        XCTAssertEqual(try money2.amountInWords(.english(style: .point, spelling: .caps)), "THIRTEEN BILLION, SIX HUNDRED MILLION, ONE AND POINT SIX ONLY")
+        XCTAssertEqual(try money2.amountInWords(.english(style: .cents, spelling: .capitalized)), "Thirteen Billion, Six Hundred Million, One Dollars And Cents Six")
+        XCTAssertEqual(try money2.amountInWords(.english(style: .cents, spelling: .caps)), "THIRTEEN BILLION, SIX HUNDRED MILLION, ONE DOLLARS AND CENTS SIX")
+        XCTAssertEqual(try money2.amountInWords(.english(style: .percent, spelling: .capitalized)), "Thirteen Billion, Six Hundred Million, One Dollars And Six 6/100")
+        XCTAssertEqual(try money2.amountInWords(.english(style: .percent, spelling: .caps)), "THIRTEEN BILLION, SIX HUNDRED MILLION, ONE DOLLARS AND SIX 6/100")
+        XCTAssertEqual(try money2.amountInWords(.english(style: .point, spelling: .capitalized)), "Thirteen Billion, Six Hundred Million, One Dollars And Point Six")
+        XCTAssertEqual(try money2.amountInWords(.english(style: .point, spelling: .caps)), "THIRTEEN BILLION, SIX HUNDRED MILLION, ONE DOLLARS AND POINT SIX")
         
 //        print(try .amountInWords(.english(style: .cents, spelling: .capitalized)))
     }

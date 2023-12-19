@@ -82,9 +82,9 @@ internal extension MoneyDecimal {
             guard let decimalStr = try decimal.toEnglish() else { return nil }
             
             switch style {
-            case .cents: return "CENTS \(decimalStr) ONLY"
-            case .point: return "POINT \(decimalStr) ONLY"
-            case .percent: return "\(decimalStr) \(decimal)/100 ONLY"
+            case .cents: return "CENTS \(decimalStr)"
+            case .point: return "POINT \(decimalStr)"
+            case .percent: return "\(decimalStr) \(decimal)/100"
             }
         }
         
@@ -103,9 +103,9 @@ internal extension MoneyDecimal {
         }
         
         switch style {
-        case .cents: return "\(intStr) AND CENTS \(decimalStr) ONLY"
-        case .point: return "\(intStr) AND POINT \(decimalStr) ONLY"
-        case .percent: return "\(intStr) AND \(decimalStr) \(decimal)/100 ONLY"
+        case .cents: return "\(intStr) DOLLARS AND CENTS \(decimalStr)"
+        case .point: return "\(intStr) DOLLARS AND POINT \(decimalStr)"
+        case .percent: return "\(intStr) DOLLARS AND \(decimalStr) \(decimal)/100"
         }
     }
 }
