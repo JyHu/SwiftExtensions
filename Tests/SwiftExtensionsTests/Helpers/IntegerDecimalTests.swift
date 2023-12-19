@@ -1,13 +1,14 @@
 //
-//  NumberCompressTests.swift
-//  
+//  IntegerDecimalTests.swift
+//
 //
 //  Created by Jo on 2023/12/19.
 //
 
 import XCTest
+import SwiftExtensions
 
-final class NumberCompressTests: XCTestCase {
+final class IntegerDecimalTests: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -18,10 +19,12 @@ final class NumberCompressTests: XCTestCase {
     }
 
     func testExample() throws {
-        print(1000000.compress(using: .english))
-        print(10008132894123510.01.compress(using: .english, decimals: 0))
-        print(UInt.max.numberOfDigits)
-        print("0023004.0000000".trimmingCharacters(in: CharacterSet(arrayLiteral: "0")))
+        let decimal = try IntegerDecimal(numberString: "-24.3546")
+        let d2 = try IntegerDecimal(numberString: "00.23")
+        let d3 = try IntegerDecimal(numberString: "0.000")
+        let d4 = try IntegerDecimal(numberString: "0.2200")
+        let d5 = try IntegerDecimal(numberString: "000.22")
+        print("\(d2)")
     }
 
     func testPerformanceExample() throws {

@@ -330,6 +330,10 @@ public extension String {
     var isLegalPureIntNumber: Bool {
         return isLegal(with: "^\\d+$")
     }
+    
+    var isLegalNumber: Bool {
+        return isLegal(with: "^-?\\d+(\\.\\d+)?$")
+    }
 }
 
 public extension String {
