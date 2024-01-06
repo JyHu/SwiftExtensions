@@ -20,8 +20,7 @@ final class NumberCompressTests: XCTestCase {
     func testExample() throws {
         print(1000000.compress(using: .english))
         print(10008132894123510.01.compress(using: .english, decimals: 0))
-        print(UInt.max.numberOfDigits)
-        print("0023004.0000000".trimmingCharacters(in: CharacterSet(arrayLiteral: "0")))
+        print(12345678.compress(step: 2, units: ["a", "b"], decimals: 2))
     }
 
     func testPerformanceExample() throws {

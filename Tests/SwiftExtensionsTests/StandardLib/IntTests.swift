@@ -24,7 +24,7 @@ final class IntTests: XCTestCase {
         // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
         // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
         
-        print(5141000.compress(step: 4, units: ["万", "亿", "万亿"]))
+//        print(5141000.compress(step: 4, units: ["万", "亿", "万亿"]))
     }
 
     func testPerformanceExample() throws {

@@ -50,6 +50,10 @@ public extension Data {
     func toPropertyList(options: PropertyListSerialization.MutabilityOptions = .mutableContainersAndLeaves) throws -> Any {
         return try PropertyListSerialization.propertyList(from: self, options: options, format: nil)
     }
+    
+    func toObject<T>() throws -> T where T: Decodable {
+        try JSONDecoder().decode(T.self, from: self)
+    }
 }
 
 // MARK: - string extension

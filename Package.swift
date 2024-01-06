@@ -23,7 +23,9 @@ package.targets.append(
 package.targets.append(
     .testTarget(
         name: "SwiftExtensionsTests",
-        dependencies: ["SwiftExtensions"]
+        dependencies: [
+            "SwiftExtensions"
+        ]
     )
 )
 

@@ -156,8 +156,9 @@ public extension MoneyDecimal {
         
         /// 中文
         case chinese(allowsZero: Bool = true)
+        
         /// 英文
-        case english(style: EnglishStyle = .cents, spelling: Spelling = .capitalized)
+        case english(style: EnglishStyle = .cents, spelling: Spelling = .caps)
     }
     
     /// 将金额转换为展示的字符串

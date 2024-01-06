@@ -57,18 +57,27 @@ public extension Array {
 }
 
 public extension Array where Element: Any {
-    func toAttributedString(attributes: [NSAttributedString.Key: Any] = [:], imageOffsetCreator: ((NSUIImage, Int) -> CGPoint)? = nil) -> NSMutableAttributedString? {
-        return NSMutableAttributedString(sources: self, attributes: attributes, imageOffsetCreator: imageOffsetCreator)
-    }
-}
-
-public extension Array where Element: Hashable {
-    func toSet() -> Set<Element> {
-        return Set(self)
+    func toAttributedString(
+        attributes: [NSAttributedString.Key: Any] = [:],
+        imageOffsetCreator: NSAttributedString.AttributedImageCreator? = nil
+    ) -> NSMutableAttributedString? {
+        return NSMutableAttributedString(
+            sources: self,
+            attributes: attributes,
+            imageOffsetCreator: imageOffsetCreator
+        )
     }
 }
 
 public extension Array where Element: Comparable {
+    
+    /// 比较当前数组与给定数组的差异性，并返回比对结果
+    /// - Description:
+    ///     - 两个数组中都有的为交集数据
+    ///     - 只有当前数组中才有的为旧的数据
+    ///     - 只有other数组中才有的为新的数据
+    /// - Parameter other: 需要比较的数组
+    /// - Returns: 比较结果
     func differenceSet(from other: [Element]) -> (newest: [Element], oldest: [Element], intersection: [Element]) {
         var mutableSelf = self
         var mutableOther = other

@@ -9,14 +9,23 @@
 
 import Foundation
 
+///
+///
+///  用户设备相关的信息获取与缓存类
+///
+///
 public class DeviceInfo {
     private struct Entry {
         var value: String?
     }
     
+    /// 支持获取的设备信息
     public enum ValueKey: String {
+        /// 设备的uuid
         case platformUUID
+        /// 串号
         case serialNumber
+        /// 系统版本
         case systemVersion
         
         fileprivate var value: String {
@@ -33,6 +42,9 @@ public class DeviceInfo {
     
     private var entriesCache: [String: Entry] = [:]
     
+    /// 获取设备的指定类型信息
+    /// - Parameter key: 获取信息的key
+    /// - Returns: 查找到的结果
     public static func get(_ key: ValueKey) -> String? {
         if let entry = shared.entriesCache[key.value] {
             return entry.value

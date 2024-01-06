@@ -17,43 +17,66 @@ import UIKit
 
 #if (canImport(AppKit) && !targetEnvironment(macCatalyst)) || canImport(UIKit)
 public extension NSAttributedString {
-    convenience init?(sources: [Any], attributes: [Key: Any] = [:], imageOffsetCreator: ((NSUIImage, Int) -> CGPoint)? = nil) {
+    
+    /// 将图表转换为富文本时的处理闭包
+    typealias AttributedImageCreator = ((NSUIImage, Int) -> CGPoint)
+    
+    /// 使用一个数组内容转换为富文本字符串内容
+    /// - Parameters:
+    ///   - sources: 组成富文本的数据源
+    ///   - attributes: 富文本的属性样式列表
+    ///   - imageOffsetCreator: 对于图表资源的处理闭包
+    convenience init?(sources: [Any], attributes: [Key: Any] = [:], imageOffsetCreator: AttributedImageCreator? = nil) {
+        
         if sources.isEmpty { return nil }
         
         let mutableAttributedString = NSMutableAttributedString(string: "")
         
+        /// 遍历所有资源，以此加入到富文本中
         for (index, element) in sources.enumerated() {
+            /// 普通字符串内容
             if let string = element as? String {
                 mutableAttributedString.append(string)
-            } else if let image = element as? NSUIImage {
+            } 
+            /// 图片资源
+            else if let image = element as? NSUIImage {
                 mutableAttributedString.append(image) {
                     imageOffsetCreator?(image, index) ?? .zero
                 }
-            } else if let attributedString = element as? NSAttributedString {
+            } 
+            /// 富文本资源
+            else if let attributedString = element as? NSAttributedString {
                 mutableAttributedString.append(attributedString)
-            } else if let attachment = element as? NSTextAttachment {
+            } 
+            /// 文本附件对象，常用于图片转换为富文本时使用
+            else if let attachment = element as? NSTextAttachment {
                 mutableAttributedString.append(NSAttributedString(attachment: attachment))
-            } else if let subSources = element as? [Any] {
+            }
+            /// 需要添加进来的子的富文本数据列表，需要转换为富文本后再添加进来
+            else if let subSources = element as? [Any] {
                 if let subAttr = subSources.toAttributedString(attributes: attributes, imageOffsetCreator: imageOffsetCreator) {
                     mutableAttributedString.append(subAttr)
                 }
-            } else {
+            }
+            /// 其他不常见的字符串内容
+            else {
                 mutableAttributedString.append("\(element)")
             }
         }
         
-        if mutableAttributedString.length != 0 {
-            if !attributes.isEmpty {
-                mutableAttributedString.addAttributes(attributes)
-            }
-            
-            self.init(attributedString: mutableAttributedString)
-        } else {
-            return nil
+        guard mutableAttributedString.length != 0 else { return nil }
+        
+        /// 添加额外的富文本属性
+        if !attributes.isEmpty {
+            mutableAttributedString.addAttributes(attributes)
         }
+        
+        /// 初始化富文本字符串内容
+        self.init(attributedString: mutableAttributedString)
     }
     
-    func applyingUnderline(style: NSUnderlineStyle, color: NSUIColor? = nil) -> NSAttributedString {
+    /// 对当前富文本内容添加下划线
+    func applyingUnderline(style: NSUnderlineStyle, color: NSUIColor? = nil, range: NSRange? = nil) -> NSAttributedString {
         let mutableAttributedString = {
             if let target = self as? NSMutableAttributedString { return target }
             return NSMutableAttributedString(attributedString: self)
@@ -63,11 +86,11 @@ public extension NSAttributedString {
             return mutableAttributedString.applying(attributes: [
                 .underlineColor: color,
                 .underlineStyle: style.rawValue,
-            ])
+            ], range: range)
         } else {
             return mutableAttributedString.applying(attributes: [
                 .underlineStyle: style.rawValue,
-            ])
+            ], range: range)
         }
     }
 }
@@ -84,13 +107,13 @@ public extension NSAttributedString {
 }
 
 public extension NSAttributedString {
-    func applying(attributes: [Key: Any]) -> NSAttributedString {
+    func applying(attributes: [Key: Any], range: NSRange? = nil) -> NSAttributedString {
         let mutableAttributedString = {
             if let target = self as? NSMutableAttributedString { return target }
             return NSMutableAttributedString(attributedString: self)
         }()
         
-        mutableAttributedString.addAttributes(attributes, range: NSMakeRange(0, length))
+        mutableAttributedString.addAttributes(attributes, range: range ?? NSMakeRange(0, length))
         return mutableAttributedString
     }
 }

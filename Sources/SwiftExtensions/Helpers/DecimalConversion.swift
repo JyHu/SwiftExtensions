@@ -19,12 +19,20 @@ public struct DecimalConvertConfig {
     
     /// 分组大小，将数值以指定数量为一组
     public var groupSize: Int = 4
+    
     /// 分组分隔符
     public var separator: Character?
+    
     /// 对于分组的数值是否需要补全
     public var polishing: Bool = true
     
     private init() { }
+    
+    /// 初始化方法
+    /// - Parameters:
+    ///   - groupSize: 分组大小，将数值以指定的数量为一组处理
+    ///   - separator: 分组分隔符
+    ///   - polishing: 对于不满足数量的分组是否补全
     private init(groupSize: Int, separator: Character? = nil, polishing: Bool) {
         self.groupSize = groupSize
         self.separator = separator
@@ -68,18 +76,46 @@ public enum DecimalConvertorError: Error {
 public protocol DecimalConvertorProtocol { }
 
 public extension DecimalConvertorProtocol {
+    
+    /// 将数值以指定进制转换为目标进制，并格式化返回
+    /// 比如将16进制的 0xA28D 转换为 10 进制的数值
+    /// - Parameters:
+    ///   - fromHex: 源数值的进制，比如2进制、8进制、32进制等
+    ///   - toHex: 转换到的目标进制，比如2进制、8进制、32进制等
+    ///   - config: 数值转换为字符串后的格式化配置项
+    /// - Returns: 转换后的格式化数值字符串
     func convert(fromHex: Int, toHex: Int, config: DecimalConvertConfig? = nil) throws -> String {
         return try _Calculator.shared.convert(convertedSource(hex: fromHex), fromHex: fromHex, toHex: toHex, config: config)
     }
     
+    /// 将数值以指定进制转换为以给定基数为进制的目标值，并格式化返回
+    /// 比如将16进制的0xA28D转换为以  ABCD 为基数的4进制
+    /// - Parameters:
+    ///   - fromHex: 源数值的进制，比如2进制、8进制、32进制等
+    ///   - toRadix: 转换到的目标进制的基数，比如自定义的4进制的基数 ABCD 等
+    ///   - config: 数值转换为字符串后的格式化配置项
+    /// - Returns: 转换后的格式化数值字符串
     func convert(fromHex: Int, toRadix: String, config: DecimalConvertConfig? = nil) throws -> String {
         return try _Calculator.shared.convert(convertedSource(hex: fromHex), fromHex: fromHex, toRadix: toRadix, config: config)
     }
     
+    /// 将数值以给定的进制基数转换为目标进制，并格式化返回
+    /// 比如将自定义的以ABCD为基数的4进制数 ADDCBA 转换为10进制的数值
+    /// - Parameters:
+    ///   - fromRadix: 源数值的进制的基数，可以2进制的 01，8进制的01234567，自定义的4进制 ABCD 等等
+    ///   - toHex: 转换到的目标进制，比如2进制、4进制、16进制等等
+    ///   - config: 数值转换为字符串时的格式化配置项
+    /// - Returns: 转换后的格式化数值字符串
     func convert(fromRadix: String, toHex: Int, config: DecimalConvertConfig? = nil) throws -> String {
         return try _Calculator.shared.convert(convertedSource(), fromRadix: fromRadix, toHex: toHex, config: config)
     }
     
+    /// 将数值以给定的进制基数转换为以给定基数的进制的数值，并格式化返回
+    /// - Parameters:
+    ///   - fromRadix: 源数值的进制的基数
+    ///   - toRadix: 目标进制的基数
+    ///   - config: 数值转换为字符串时的格式化配置项
+    /// - Returns: 转换后的格式化数值字符串
     func convert(fromRadix: String, toRadix: String, config: DecimalConvertConfig? = nil) throws -> String {
         return try _Calculator.shared.convert(convertedSource(), fromRadix: fromRadix, toRadix: toRadix, config: config)
     }
@@ -101,6 +137,7 @@ public extension DecimalConvertorProtocol {
 }
 
 extension String: DecimalConvertorProtocol { }
+extension Substring: DecimalConvertorProtocol { }
 extension Int: DecimalConvertorProtocol { }
 extension Int8: DecimalConvertorProtocol { }
 extension Int16: DecimalConvertorProtocol { }
@@ -128,9 +165,25 @@ public extension String {
     }
 }
 
+public extension Substring {
+    func baseDecimals(fromHex: Int) throws -> [Int] {
+        return try String(self).baseDecimals(fromHex: fromHex)
+    }
+    
+    func baseDecimals(fromRadix: String) throws -> [Int] {
+        return try String(self).baseDecimals(fromRadix: fromRadix)
+    }
+}
+
 /// 将10进制源数据列表转换为目标进制的数值字符串
 /// 如将10进制的基数数组 [3, 5, 3, 5, 9] 转换为16进制的数值 8A1F
 public extension Array where Element == Int {
+    
+    /// 将当前的数值数组转换为目标进制的数值字符串，并格式化返回
+    /// - Parameters:
+    ///   - toHex: 目标进制
+    ///   - config: 格式化配置项
+    /// - Returns: 转换后的结果
     func convert(toHex: Int, config: DecimalConvertConfig? = nil) throws -> String {
         return try convert(toRadix: try _Calculator.shared.radix(of: toHex), config: config)
     }
@@ -261,6 +314,7 @@ private extension Array where Element == Int {
         return res
     }
     
+    /// 从后往前数第index个数据是什么
     func decimal_backward(at index: Int) -> Int? {
         let index = count - index - 1
         if index < 0 || index >= count { return nil }
@@ -282,6 +336,8 @@ private extension Array where Element == Int {
         return result.reversed()
     }
     
+    /// 将当前数值数列对给定数值取模
+    /// - Returns: 取模后的结果和余数
     func decimal_mode(to hex: Int) -> ([Int], Int) {
         var quotients: [Int] = []
         var tmpVal: Int = 0

@@ -51,11 +51,34 @@ import Foundation
 public extension Double {
     /// 需要转换的语言，不同的语言单位不同
     enum Language {
+        /// 英文格式
         case english
+        
+        /// 中文格式，4位长度，比如万、亿等
         case chinese
+        
+        /// 中文格式，3位长度，跟英文格式匹配，如千、百万、十亿等
         case chinese3
     }
     
+    /// 将当前数值压缩展示
+    ///
+    /// - Description: 根据给定的单位列表和步长来压缩显示的数值。
+    ///       比如对于中文的万、亿等单位，步长为4
+    ///       对于英文中的 K、M、B 等单位，步长为3
+    ///       也可以根据需要自定义步长和单位，比如自定义单位为 A、B、C、D，步长为3，
+    ///       那么将数值压缩后，就会以给定的参数显示，比如1234567890，保留2位小数后压缩展示为 1.23C，
+    ///
+    /// - Warning: 这里有一点需要注意，如果给定的单位列表不足以满足最大的数字位，那么会以最大的单位来压缩。
+    ///       比如单位列表为 [K, M, B]，步长为3，但是给定的数值很大，如1 234 567 890 123，这个数
+    ///       会需要5个单位级数，但是给定的单位只有3个，那么压缩后就只会压缩到最大的单位 B ，压缩
+    ///       后的结果就是 1234.58B。
+    ///
+    /// - Parameters:
+    ///   - step: 针对于给定单位列表的步长
+    ///   - units: 缩写单位
+    ///   - decimals: 保留小数位数
+    /// - Returns: 压缩展示的字符串内容
     func compress(step: Int = 3, units: [String], decimals: Int = 2) -> String {
         for enuInd in 0 ..< units.count {
             let index = units.count - enuInd
@@ -69,6 +92,11 @@ public extension Double {
         return "\(self)"
     }
     
+    /// 按照预设的语言类型对当前数值做压缩展示操作
+    /// - Parameters:
+    ///   - language: 需要使用的单位对应的语言类型
+    ///   - decimals: 保留的小数位数
+    /// - Returns: 压缩后的展示字符串内容
     func compress(using language: Language, decimals: Int = 2) -> String {
         switch language {
         case .english: return compress(step: 3, units: Double.englishUnits, decimals: decimals)
@@ -79,10 +107,12 @@ public extension Double {
 }
 
 public extension BinaryInteger {
+    /// 同 Double.compress
     func compress(step: Int = 3, units: [String] = ["K", "M", "B", "T"], decimals: Int) -> String {
         return Double(self).compress(step: step, units: units, decimals: decimals)
     }
     
+    /// 同 Double.compress
     func compress(using language: Double.Language, decimals: Int = 2) -> String {
         return Double(self).compress(using: language, decimals: decimals)
     }
