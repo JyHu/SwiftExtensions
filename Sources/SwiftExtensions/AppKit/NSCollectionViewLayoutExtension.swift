@@ -30,7 +30,7 @@ public extension NSCollectionViewLayout {
     }
     
     private var detectedInfo: DetectableInfo? {
-        return getAssociated(associatedKey: &AssociatedKey.key)
+        return associatedObject(for: AssociatedKey.key)
     }
     
     convenience init(sizeDetectedDelegate: SizeDetectableCollectionLayoutDelegate?, autoLayoutSide: AutoLayoutSide? = .height) {
@@ -39,7 +39,7 @@ public extension NSCollectionViewLayout {
         let infoCache = DetectableInfo()
         infoCache.delegate = sizeDetectedDelegate
         infoCache.autoLayoutSide = autoLayoutSide
-        setAssociated(value: infoCache, associatedKey: &AssociatedKey.key)
+        setAssociatedObject(infoCache, for: AssociatedKey.key, policy: .retainNonatomic)
     }
     
     fileprivate func inspectPrepareAction() {

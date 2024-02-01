@@ -47,7 +47,7 @@ public extension NSObject {
     }
     
     /// 使用 objc_getAssociatedObject 获取当前对象的一个属性值
-    func getAssociatedObject<T>(_ key: String) -> T? {
+    func associatedObject<T>(for key: String) -> T? {
         return objc_getAssociatedObject(self, key.unsafePointer) as? T
     }
     
@@ -56,3 +56,26 @@ public extension NSObject {
         objc_removeAssociatedObjects(self)
     }
 }
+
+public extension NSObject {
+    private class _WeakAssociationObject {
+        weak var object: AnyObject?
+        init(object: AnyObject?) {
+            self.object = object
+        }
+    }
+    
+    /// 动态添加weak属性
+    /// @param object 要添加的属性值
+    /// @param key 缓存的key
+    func setAssociatedWeakObject<T>(_ weakObject: T, for key: String) where T: AnyObject {
+        objc_setAssociatedObject(self, key.unsafePointer, _WeakAssociationObject(object: weakObject), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+    }
+    
+    /// 根据给定的key获取存储的weak类型的对象
+    /// @param key key
+    func associatedWeakObject<T>(for key: String) -> T? where T: AnyObject {
+        return (objc_getAssociatedObject(self, key.unsafePointer) as? _WeakAssociationObject)?.object as? T
+    }
+}
+
