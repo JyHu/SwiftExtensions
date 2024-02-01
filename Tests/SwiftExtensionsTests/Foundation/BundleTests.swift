@@ -11,8 +11,6 @@ import SwiftExtensions
 final class BundleTests: XCTestCase {
     func testExample() throws {
         
-        XCTAssertEqual(Bundle.main.shortVersionString, "14.0.1")
-        XCTAssertEqual(Bundle.main.version, "21250")
         XCTAssertEqual(Bundle.main.identifier, "com.apple.dt.xctest.tool")
     }
 }

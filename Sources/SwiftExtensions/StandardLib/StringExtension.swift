@@ -420,3 +420,13 @@ public extension String {
         return attributed(attributes)
     }
 }
+
+public extension String {
+    
+    /// 将字符串转换 unsafe raw pointer 格式，可以在 objc association 中使用
+    var unsafePointer: UnsafeRawPointer {
+        return withCString { cString in
+            return UnsafeRawPointer(cString)
+        }
+    }
+}

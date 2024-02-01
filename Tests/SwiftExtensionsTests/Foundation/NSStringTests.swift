@@ -8,7 +8,7 @@
 import XCTest
 import SwiftExtensions
 
-final class StringTests: XCTestCase {
+final class NSStringTests: XCTestCase {
     func testExample() throws {
         let str = "hello world"
         
