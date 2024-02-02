@@ -22,6 +22,18 @@ import Foundation
 ///
 ///
 public extension NSObject {
+    struct AssociationKey {
+        let rawValue: String
+        
+        public init(rawValue: String) {
+            self.rawValue = rawValue
+        }
+        
+        public static func create(_ rawValue: String) -> AssociationKey {
+            return AssociationKey(rawValue: rawValue)
+        }
+    }
+    
     /// 数据缓存策略
     enum OBJCAssociationPolicy {
         case retainNonatomic
@@ -42,13 +54,13 @@ public extension NSObject {
     }
     
     /// 使用 objc_setAssociatedObject 给当前对象设置一个属性值
-    func setAssociatedObject<T>(_ object: T?, for key: String, policy: OBJCAssociationPolicy) {
-        objc_setAssociatedObject(self, key.unsafePointer, object, policy.objcPolicy)
+    func setAssociatedObject<T>(_ object: T?, for key: AssociationKey, policy: OBJCAssociationPolicy) {
+        objc_setAssociatedObject(self, key.rawValue.unsafePointer, object, policy.objcPolicy)
     }
     
     /// 使用 objc_getAssociatedObject 获取当前对象的一个属性值
-    func associatedObject<T>(for key: String) -> T? {
-        return objc_getAssociatedObject(self, key.unsafePointer) as? T
+    func associatedObject<T>(for key: AssociationKey) -> T? {
+        return objc_getAssociatedObject(self, key.rawValue.unsafePointer) as? T
     }
     
     /// 移除通过runtime方式添加到当前对象上的所有属性值
@@ -68,14 +80,13 @@ public extension NSObject {
     /// 动态添加weak属性
     /// @param object 要添加的属性值
     /// @param key 缓存的key
-    func setAssociatedWeakObject<T>(_ weakObject: T, for key: String) where T: AnyObject {
-        objc_setAssociatedObject(self, key.unsafePointer, _WeakAssociationObject(object: weakObject), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+    func setAssociatedWeakObject<T>(_ weakObject: T, for key: AssociationKey) where T: AnyObject {
+        objc_setAssociatedObject(self, key.rawValue.unsafePointer, _WeakAssociationObject(object: weakObject), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
     /// 根据给定的key获取存储的weak类型的对象
     /// @param key key
-    func associatedWeakObject<T>(for key: String) -> T? where T: AnyObject {
-        return (objc_getAssociatedObject(self, key.unsafePointer) as? _WeakAssociationObject)?.object as? T
+    func associatedWeakObject<T>(for key: AssociationKey) -> T? where T: AnyObject {
+        return (objc_getAssociatedObject(self, key.rawValue.unsafePointer) as? _WeakAssociationObject)?.object as? T
     }
 }
-
