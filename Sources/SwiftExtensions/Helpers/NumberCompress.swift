@@ -59,6 +59,15 @@ public extension Double {
         
         /// 中文格式，3位长度，跟英文格式匹配，如千、百万、十亿等
         case chinese3
+        
+        /// 返回最低一级进制的数值，比如英文1000进位
+        public var lowestStep: Double {
+            switch self {
+            case .english: return 1000
+            case .chinese: return 10000
+            case .chinese3: return 1000
+            }
+        }
     }
     
     /// 将当前数值压缩展示
@@ -89,7 +98,7 @@ public extension Double {
             }
         }
         
-        return "\(self)"
+        return String(format: "%.\(decimals)f", self)
     }
     
     /// 按照预设的语言类型对当前数值做压缩展示操作
@@ -102,6 +111,27 @@ public extension Double {
         case .english: return compress(step: 3, units: Double.englishUnits, decimals: decimals)
         case .chinese: return compress(step: 4, units: Double.chineseUnits, decimals: decimals)
         case .chinese3: return compress(step: 3, units: Double.chinese3Units, decimals: decimals)
+        }
+    }
+    
+    func compressedUnit(step: Int = 3, units: [String]) -> String? {
+        for enuInd in 0 ..< units.count {
+            let index = units.count - enuInd
+            let compressedValue = self / pow(10, Double(step * index))
+
+            if compressedValue >= 1 {
+                return units[index - 1]
+            }
+        }
+        
+        return nil
+    }
+    
+    func compressedUnit(using language: Language) -> String? {
+        switch language {
+        case .english: return compressedUnit(step: 3, units: Double.englishUnits)
+        case .chinese: return compressedUnit(step: 4, units: Double.chineseUnits)
+        case .chinese3: return compressedUnit(step: 3, units: Double.chinese3Units)
         }
     }
 }

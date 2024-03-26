@@ -7,20 +7,20 @@
 
 #if canImport(AppKit) && !targetEnvironment(macCatalyst)
 
-import Cocoa
+import AppKit
 
 public protocol SizeDetectableCollectionLayoutDelegate: NSObjectProtocol {
     func collectionLayout(_ collectionLayout: NSCollectionViewLayout, contentSizeDidChangeTo contentSize: NSSize)
+}
+
+private extension NSObject.AssociationKey {
+    static let detectableInfo = NSObject.AssociationKey(rawValue: "com.auu.detectableInfo.cacheKey")
 }
 
 public extension NSCollectionViewLayout {
     enum AutoLayoutSide {
         case width
         case height
-    }
-    
-    private struct AssociatedKey {
-        static var key = "com.auu.detectableInfo.cacheKey"
     }
     
     private class DetectableInfo {
@@ -30,7 +30,12 @@ public extension NSCollectionViewLayout {
     }
     
     private var detectedInfo: DetectableInfo? {
-        return associatedObject(for: AssociatedKey.key)
+        set {
+            setAssociatedObject(newValue, for: .detectableInfo, policy: .retainNonatomic)
+        }
+        get {
+            return associatedObject(for: .detectableInfo)
+        }
     }
     
     convenience init(sizeDetectedDelegate: SizeDetectableCollectionLayoutDelegate?, autoLayoutSide: AutoLayoutSide? = .height) {
@@ -39,7 +44,8 @@ public extension NSCollectionViewLayout {
         let infoCache = DetectableInfo()
         infoCache.delegate = sizeDetectedDelegate
         infoCache.autoLayoutSide = autoLayoutSide
-        setAssociatedObject(infoCache, for: AssociatedKey.key, policy: .retainNonatomic)
+        
+        self.detectedInfo = infoCache
     }
     
     fileprivate func inspectPrepareAction() {

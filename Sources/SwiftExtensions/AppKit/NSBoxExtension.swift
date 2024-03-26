@@ -7,7 +7,7 @@
 
 #if canImport(Cocoa)
 
-import Cocoa
+import AppKit
 
 public extension NSBox {
     convenience init(boxType: BoxType = .primary, title: String = "", contentView: NSView) {

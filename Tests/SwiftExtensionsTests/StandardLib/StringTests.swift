@@ -17,4 +17,11 @@ final class StringTests: XCTestCase {
         
         XCTAssertNotNil("".unsafePointer)
     }
+    
+    func testRandomGenerate() throws {
+        let range = 10..<20
+        XCTAssertEqual(String.random(length: 10).count, 10)
+        XCTAssertTrue(range.contains(String.random(length: range).count))
+        XCTAssertTrue(range.contains(String.random(length: range, count: range).count))
+    }
 }

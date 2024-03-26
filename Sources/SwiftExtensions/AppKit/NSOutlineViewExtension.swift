@@ -5,9 +5,9 @@
 //  Created by Jo on 2022/11/12.
 //
 
-#if canImport(Cocoa) && os(macOS)
+#if canImport(AppKit) && os(macOS)
 
-import Cocoa
+import AppKit
 
 public extension NSOutlineView {
     /// 展开所有节点

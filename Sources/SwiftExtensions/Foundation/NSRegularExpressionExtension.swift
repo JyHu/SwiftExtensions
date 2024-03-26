@@ -83,4 +83,34 @@ public extension NSRegularExpression {
     }
 }
 
+private extension NSObject.AssociationKey {
+    static let groups = NSObject.AssociationKey(rawValue: "com.auu.regex.groups")
+}
+
+private let _groupPattern = "\\(\\?<(\\w+)>"
+private let _groupRegex = try? NSRegularExpression(pattern: _groupPattern)
+
+public extension NSRegularExpression {
+    var namedCaptureGroups: [String] {
+        if let cachedGroups: [String] = associatedObject(for: .groups) {
+            return cachedGroups
+        }
+        
+        var enumeratedGroups: [String] = []
+        
+        if let regex = _groupRegex {
+            let checkingResults = regex.matches(in: pattern)
+            for checkingResult in checkingResults {
+                if let groupName = pattern[checkingResult.range(at: 1)] {
+                    enumeratedGroups.append(groupName)
+                }
+            }
+        }
+        
+        setAssociatedObject(enumeratedGroups, for: .groups, policy: .retainNonatomic)
+        
+        return enumeratedGroups
+    }
+}
+
 #endif

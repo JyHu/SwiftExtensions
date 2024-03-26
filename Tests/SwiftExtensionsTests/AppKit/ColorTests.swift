@@ -10,8 +10,6 @@ import SwiftExtensions
 
 final class ColorTests: XCTestCase {
     func testExample() throws {
-        let rgb = NSUIColor.RGBComponents(hexValue: 0xEA403E)
-        let color = NSUIColor.red
-        color.hsbComponents
+
     }
 }

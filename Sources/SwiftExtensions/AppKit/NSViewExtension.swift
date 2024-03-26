@@ -118,23 +118,23 @@ public extension NSView {
     }
 }
 
+private extension NSObject.AssociationKey {
+    static let trackingArea = NSObject.AssociationKey(rawValue: "com.auu.association.trackingArea")
+}
+
 public extension NSView {
-    private struct AssociatedKeys {
-        static var trackingArea: String = "com.auu.association.trackingArea"
-    }
-    
     /// 添加鼠标事件跟踪区域
     /// - Parameters:
     ///   - rect: 需要添加的区域
     ///   - options: 跟踪的事件类型
     func addCustomizedTrackingArea(with rect: NSRect? = nil, options: NSTrackingArea.Options = [.mouseEnteredAndExited, .activeAlways]) {
-        if let trackingArea = objc_getAssociatedObject(self, &AssociatedKeys.trackingArea) as? NSTrackingArea {
+        if let trackingArea: NSTrackingArea = associatedObject(for: .trackingArea) {
             removeTrackingArea(trackingArea)
         }
         
         let trackingArea = NSTrackingArea(rect: rect ?? bounds, options: options, owner: self, userInfo: nil)
         addTrackingArea(trackingArea)
-        objc_setAssociatedObject(self, &AssociatedKeys.trackingArea, trackingArea, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        setAssociatedObject(trackingArea, for: .trackingArea, policy: .retainNonatomic)
     }
 }
 

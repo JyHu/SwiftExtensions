@@ -27,11 +27,6 @@ public extension NSDecimalNumber {
 
 public extension NSDecimalNumber {
     func highOrderIncrease() -> Self {
-        let decimal = self.decimalValue
-        let exponent = decimal.exponent
-//        let positive = exponent == 0 ? leng : leng + exponent - 1
-//        principalValue = number.adding(NSDecimalNumber(value: 1).multiplying(byPowerOf10: Int16(positive))).stringValue
-        
         return self
     }
     

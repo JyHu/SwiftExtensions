@@ -36,6 +36,10 @@ public extension NSTextView {
         isAutomaticQuoteSubstitutionEnabled = false
         isAutomaticTextCompletionEnabled = false
     }
+    
+    func append(_ text: String, attributes: [NSAttributedString.Key: Any] = [:]) {
+        textStorage?.append(text, attributes: attributes)
+    }
 }
 
 #endif

@@ -7,7 +7,7 @@
 
 #if canImport(AppKit) && !targetEnvironment(macCatalyst)
 
-import Cocoa
+import AppKit
 
 public extension NSDocument {
     
