@@ -10,12 +10,10 @@
 #if canImport(AppKit) && !targetEnvironment(macCatalyst)
 import AppKit
 public typealias NSUIView = NSView
-public typealias NSUIEdgeInsets = NSEdgeInsets
 public typealias NSUILayoutGuide = NSLayoutGuide
 #elseif canImport(UIKit)
 import UIKit
 public typealias NSUIView = UIView
-public typealias NSUIEdgeInsets = UIEdgeInsets
 public typealias NSUILayoutGuide = UILayoutGuide
 #endif
 

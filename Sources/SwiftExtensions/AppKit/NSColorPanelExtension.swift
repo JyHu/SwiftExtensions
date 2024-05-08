@@ -10,19 +10,6 @@
 import AppKit
 
 public extension NSColorPanel {
-    static func saftyClose() {
-        if sharedColorPanelExists {
-            shared.close()
-        }
-        
-        
-        let bridge = NSColorPanel.pickColor(color: .red) { color in
-            
-        }
-    }
-}
-
-public extension NSColorPanel {
     class Bridge {
         public private(set) var callback: ((NSColor) -> Void)?
         
