@@ -54,6 +54,42 @@ public extension Array {
 
         return results
     }
+    
+    /// 分组并处理数组元素
+    /// - Parameters:
+    ///   - groupCount: 每组的元素数量
+    ///   - block: 处理每组元素的闭包
+    /// - Returns: 处理后元素组成的数组
+    ///
+    /// 使用示例:
+    ///   ```swift
+    ///   let inputArray = ["1", "2", "3", "4", "5", "6", "7"]
+    ///   let result = inputArray.compactMap(groupCount: 2) { sub in
+    ///       // 对每组元素进行处理，将每个元素加1后转为字符串，并用逗号分隔
+    ///       return sub.compactMap({ String(describing: Int($0)! + 1) }).joined(separator: ", ")
+    ///   }.joined(separator: "\n")
+    ///
+    ///   print(result)
+    ///   // 输出：
+    ///   // 2, 3
+    ///   // 4, 5
+    ///   // 6, 7
+    ///   // 8
+    ///   ```
+    func compactMap<T>(groupCount: Int, using block: (Array.SubSequence) -> T?) -> [T] {
+        var result: [T] = []
+        var start = 0
+        
+        while start < count {
+            let end = Swift.min(start + groupCount, count)
+            if let value = block(self[start..<end]) {
+                result.append(value)
+            }
+            start = end
+        }
+        
+        return result
+    }
 }
 
 public extension Array where Element: Any {

@@ -83,9 +83,15 @@ public extension URL {
     
     func hostAndPath(percentEncoded: Bool = true) -> String {
         let path = getPath(percentEncoded: percentEncoded)
-        if let host = getHost(percentEncoded: percentEncoded) {
+        
+        if let host = getHost(percentEncoded: percentEncoded), !host.isEmpty {
+            if path.isEmpty {
+                return host
+            }
+            
             return host + "/" + path
         }
+        
         return path
     }
 }

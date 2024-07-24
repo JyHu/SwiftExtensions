@@ -150,6 +150,30 @@ public extension String {
         }
         return -1
     }
+    
+    /// 计算当前段落的开始位置距离选择内容开始位置的缩进长度
+    func paraghIndentLength(to selectedRange: Range<String.Index>) -> Int {
+        // 找到当前选择内容的起始位置
+        let startOfSelection = selectedRange.lowerBound
+        
+        // 找到当前选择内容所在段落的起始位置
+        var startOfParagraph = startOfSelection
+        if startOfParagraph > self.startIndex && self[startOfParagraph] == "\n" {
+            startOfParagraph = self.index(before: startOfParagraph)
+        }
+        
+        while startOfParagraph > self.startIndex && self[startOfParagraph] != "\n" {
+            startOfParagraph = self.index(before: startOfParagraph)
+        }
+        
+        // 计算段落开始到当前选择内容开始的距离，即缩进长度
+        let indentLength = self.distance(from: startOfParagraph, to: startOfSelection)
+        
+        if indentLength == 0 {
+            return 0
+        }
+        return indentLength - 1
+    }
 }
 
 public extension String {

@@ -31,9 +31,10 @@ public extension NSObject {
     ///   - title: 菜单项标题
     ///   - subMenu: 子菜单
     /// - Returns: 菜单项
-    func createMenuItem(with title: String, subMenu: NSMenu?) -> NSMenuItem {
+    func createMenuItem(with title: String, subMenu: NSMenu?, image: NSImage? = nil) -> NSMenuItem {
         let item = NSMenuItem(title: title, action: nil, keyEquivalent: "")
         item.submenu = subMenu
+        item.image = image
         return item
     }
     
