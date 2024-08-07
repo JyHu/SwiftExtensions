@@ -90,28 +90,6 @@ public extension String {
         return self[self.index(startIndex, offsetBy: index)]
     }
     
-    /// Get all ranges of given string in current string.
-    /// - Parameters:
-    ///   - string: Searched string
-    ///   - options: Match options
-    /// - Returns: All mached ranges
-    func ranges(of string: String, options: CompareOptions = .caseInsensitive) -> [Range<String.Index>] {
-        if options == .regularExpression {
-            return textCheckingResults(with: string).map { rangeValue(from: $0.range) }
-        }
-        
-        
-        func nextRange(from beginIndex: String.Index, result: [Range<String.Index>]) -> [Range<String.Index>] {
-            guard let targetRange = range(of: string, options: options, range: beginIndex ..< endIndex) else {
-                return result
-            }
-            
-            return nextRange(from: targetRange.upperBound, result: result + [targetRange])
-        }
-        
-        return nextRange(from: startIndex, result: [])
-    }
-    
     func nsranges(of string: String, options: NSString.CompareOptions = []) -> [NSRange] {
         if options == .regularExpression {
             return textCheckingResults(with: string).map { $0.range }
@@ -309,7 +287,7 @@ public extension String {
     }
     
     /// 获取当前字符串的range对象
-    var rangeValue: Range<String.Index>! {
+    var rangeValue: Range<String.Index> {
         return startIndex ..< index(startIndex, offsetBy: count)
     }
     
@@ -320,10 +298,8 @@ public extension String {
         return NSRange(range, in: self)
     }
     
-    func rangeValue(from nsrange: NSRange) -> Range<String.Index> {
-        let startIndex = index(startIndex, offsetBy: nsrange.location)
-        let endIndex = index(startIndex, offsetBy: nsrange.length)
-        return startIndex ..< endIndex
+    func rangeValue(from nsrange: NSRange) -> Range<String.Index>? {
+        return Range<String.Index>(nsrange, in: self)
     }
     
     var wordCount: Int {
@@ -452,5 +428,11 @@ public extension String {
         return withCString { cString in
             return UnsafeRawPointer(cString)
         }
+    }
+}
+
+public extension NSRange {
+    func range(in string: String) -> Range<String.Index>? {
+        return Range<String.Index>(self, in: string)
     }
 }
