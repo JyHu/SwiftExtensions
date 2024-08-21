@@ -17,7 +17,7 @@ public typealias NSUIImage = UIImage
 
 public extension NSUIImage {
     
-    /// Create a solid color image using the given property.
+    /// Create a solid color image using the given properties.
     /// - Parameters:
     ///   - color: The target image color.
     ///   - size: The target image size.
@@ -41,6 +41,9 @@ public extension NSUIImage {
 #endif
     }
     
+    /// Creates a new image by applying a tint color to the existing image.
+    /// - Parameter tintColor: The color to apply to the image.
+    /// - Returns: A new image with the tint color applied.
     func imageWith(tintColor: NSUIColor) -> NSUIImage {
 #if canImport(UIKit)
         guard let cgImage = cgImage else { return self }
@@ -81,6 +84,8 @@ public extension NSUIImage {
 
 public extension String {
     @available(macOS 11.0, iOS 13.0, *)
+    /// Converts the string to a system symbol image.
+    /// - Returns: An optional NSUIImage representing the system symbol.
     var systemSymbolImage: NSUIImage? {
 #if os(macOS)
         return NSImage(systemSymbolName: self, accessibilityDescription: nil)
