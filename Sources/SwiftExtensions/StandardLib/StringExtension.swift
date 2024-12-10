@@ -202,10 +202,14 @@ public extension String {
         if range.lowerBound == startIndex {
             let target = replacingCharacters(in: range, with: relativePath)
             
-            if target.hasPrefix("/") {
-                return relativePath + target
+            if relativePath.isEmpty {
+                if target.hasPrefix("/") {
+                    return target
+                } else {
+                    return "/" + target
+                }
             } else {
-                return relativePath + "/" + target
+                return target
             }
         }
         
