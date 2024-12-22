@@ -24,6 +24,10 @@ public extension NSMutableAttributedString {
         }
     }
     
+    func append(_ string: String, link: Any) {
+        append(NSAttributedString(string: string, attributes: [.link: link]))
+    }
+    
 #if (canImport(AppKit) && !targetEnvironment(macCatalyst)) || canImport(UIKit)
     func append(_ image: NSUIImage, offsetCreator: (() -> CGPoint)? = nil) {
         append(image.attributedString(with: offsetCreator))
