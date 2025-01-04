@@ -18,60 +18,171 @@ import UIKit
 #if (canImport(AppKit) && !targetEnvironment(macCatalyst)) || canImport(UIKit)
 public extension NSAttributedString {
     
-    /// 将图表转换为富文本时的处理闭包
+    /// A typealias for a closure that calculates the offset for images inserted into an `NSAttributedString`.
+    ///
+    /// - Parameters:
+    ///   - NSUIImage: The image being inserted into the attributed string.
+    ///   - Int: The index of the image in the `sources` array.
+    ///
+    /// - Returns: A `CGPoint` representing the offset to apply to the image.
+    ///
+    /// - Usage:
+    ///   You can use this closure to define custom alignment or positioning for images within the attributed string.
+    ///
+    /// - Example:
+    ///   ```swift
+    ///   let imageOffsetCreator: AttributedImageCreator = { image, index in
+    ///       // Align images with a custom vertical offset based on index.
+    ///       return CGPoint(x: 0, y: -CGFloat(index) * 5)
+    ///   }
+    ///
+    ///   let attributedString = NSAttributedString(
+    ///       sources: ["Text before", UIImage(named: "icon1"), "Text after"],
+    ///       separator: ", ",
+    ///       imageOffsetCreator: imageOffsetCreator
+    ///   )
+    ///   ```
     typealias AttributedImageCreator = ((NSUIImage, Int) -> CGPoint)
     
-    /// 使用一个数组内容转换为富文本字符串内容
+    /// Convenience initializer for creating an `NSAttributedString` from multiple sources without a separator.
+    ///
     /// - Parameters:
-    ///   - sources: 组成富文本的数据源
-    ///   - attributes: 富文本的属性样式列表
-    ///   - imageOffsetCreator: 对于图表资源的处理闭包
-    convenience init?(sources: [Any], attributes: [Key: Any] = [:], imageOffsetCreator: AttributedImageCreator? = nil) {
-        
-        if sources.isEmpty { return nil }
-        
+    ///   - sources: An array of mixed content (`String`, `NSUIImage`, `NSAttributedString`, etc.) to be converted into a single `NSAttributedString`.
+    ///   - attributes: A dictionary of attributes (`[Key: Any]`) to be applied to the entire resulting string.
+    ///   - imageOffsetCreator: A closure that provides the offset for images within the attributed string.
+    ///
+    /// - Usage:
+    ///   ```
+    ///   let attributedString = NSAttributedString(sources: ["Hello", UIImage(named: "icon"), "World"], attributes: [.foregroundColor: UIColor.red])
+    ///   ```
+    ///
+    /// - Returns: An optional `NSAttributedString`. If the `sources` array is empty or all elements are invalid, returns `nil`.
+    convenience init?(
+        sources: [Any],
+        attributes: [Key: Any] = [:],
+        imageOffsetCreator: AttributedImageCreator? = nil
+    ) {
+        // Calls another initializer, providing `nil` for the separator.
+        self.init(sources: sources, separator: nil, attributes: attributes, imageOffsetCreator: imageOffsetCreator)
+    }
+
+    /// Convenience initializer for creating an `NSAttributedString` with a string separator.
+    ///
+    /// - Parameters:
+    ///   - sources: An array of mixed content (`String`, `NSUIImage`, `NSAttributedString`, etc.).
+    ///   - separator: A string separator to be inserted between each element.
+    ///   - attributes: Attributes to apply to the resulting attributed string.
+    ///   - imageOffsetCreator: A closure for calculating image offsets.
+    ///
+    /// - Usage:
+    ///   ```
+    ///   let attributedString = NSAttributedString(sources: ["Hello", "World"], separator: ", ")
+    ///   ```
+    ///
+    /// - Returns: An optional `NSAttributedString`. If the `sources` array is empty or all elements are invalid, returns `nil`.
+    convenience init?(
+        sources: [Any],
+        separator: String,
+        attributes: [Key: Any] = [:],
+        imageOffsetCreator: AttributedImageCreator? = nil
+    ) {
+        // Converts the separator string into an attributed string and calls the main initializer.
+        self.init(sources: sources, separator: NSAttributedString(string: separator), attributes: attributes, imageOffsetCreator: imageOffsetCreator)
+    }
+
+    /// Main initializer for creating an `NSAttributedString` with full customization.
+    ///
+    /// - Parameters:
+    ///   - sources: An array of mixed content to be converted into a single `NSAttributedString`. The array can include:
+    ///     - `String`: Text to be included directly.
+    ///     - `NSUIImage`: Images to be inserted into the attributed string.
+    ///     - `NSAttributedString`: Preformatted attributed strings to be appended.
+    ///     - `NSTextAttachment`: Attachments for embedding images or other content.
+    ///     - `[Any]`: Nested arrays of mixed content (recursively processed).
+    ///   - separator: An optional `NSAttributedString` to use as a separator between elements.
+    ///   - attributes: Attributes to apply to the entire resulting string.
+    ///   - imageOffsetCreator: A closure for calculating offsets for image elements. If `nil`, the default offset is `.zero`.
+    ///
+    /// - Usage:
+    ///   ```
+    ///   let attributedString = NSAttributedString(
+    ///       sources: ["Hello", UIImage(named: "icon"), "World"],
+    ///       separator: NSAttributedString(string: " - "),
+    ///       attributes: [.font: UIFont.systemFont(ofSize: 16)]
+    ///   )
+    ///   ```
+    ///
+    /// - Returns: An optional `NSAttributedString`. If the `sources` array is empty or all elements are invalid, returns `nil`.
+    convenience init?(
+        sources: [Any],
+        separator: NSAttributedString?,
+        attributes: [Key: Any] = [:],
+        imageOffsetCreator: AttributedImageCreator? = nil
+    ) {
+        // Guard clause: If sources are empty, return nil since there's nothing to construct.
+        if sources.isEmpty {
+            return nil
+        }
+
+        // Creates a mutable attributed string to build the result.
         let mutableAttributedString = NSMutableAttributedString(string: "")
-        
-        /// 遍历所有资源，以此加入到富文本中
+
+        // Iterates over each element in the `sources` array.
         for (index, element) in sources.enumerated() {
-            /// 普通字符串内容
+            // If the index is greater than 1, append the separator between elements (if provided).
+            if index > 0, let separator {
+                mutableAttributedString.append(separator)
+            }
+
+            // Handles different types of elements in the `sources` array.
+
+            // Case 1: If the element is a `String`, append it to the attributed string.
             if let string = element as? String {
                 mutableAttributedString.append(string)
-            } 
-            /// 图片资源
+            }
+            // Case 2: If the element is an `NSUIImage`, convert it to an attributed string with offset.
             else if let image = element as? NSUIImage {
                 mutableAttributedString.append(image) {
+                    // Use the `imageOffsetCreator` closure if available, otherwise set offset to `.zero`.
                     imageOffsetCreator?(image, index) ?? .zero
                 }
-            } 
-            /// 富文本资源
+            }
+            // Case 3: If the element is already an `NSAttributedString`, append it directly.
             else if let attributedString = element as? NSAttributedString {
                 mutableAttributedString.append(attributedString)
-            } 
-            /// 文本附件对象，常用于图片转换为富文本时使用
+            }
+            // Case 4: If the element is an `NSTextAttachment`, convert it to an attributed string and append.
             else if let attachment = element as? NSTextAttachment {
                 mutableAttributedString.append(NSAttributedString(attachment: attachment))
             }
-            /// 需要添加进来的子的富文本数据列表，需要转换为富文本后再添加进来
-            else if let subSources = element as? [Any] {
-                if let subAttr = subSources.toAttributedString(attributes: attributes, imageOffsetCreator: imageOffsetCreator) {
-                    mutableAttributedString.append(subAttr)
+            // Case 5: If the element is a nested array, recursively create an attributed string and append.
+            else if let subSources = element as? [Any], subSources.count > 0 {
+                if let subAttributedString = NSAttributedString(
+                    sources: subSources,
+                    separator: separator,
+                    attributes: attributes,
+                    imageOffsetCreator: imageOffsetCreator
+                ) {
+                    mutableAttributedString.append(subAttributedString)
                 }
             }
-            /// 其他不常见的字符串内容
+            // Case 6: Fallback for unsupported types, convert to string and append.
             else {
                 mutableAttributedString.append("\(element)")
             }
         }
-        
-        guard mutableAttributedString.length != 0 else { return nil }
-        
-        /// 添加额外的富文本属性
+
+        // If the resulting attributed string is empty, return nil.
+        if mutableAttributedString.length == 0 {
+            return nil
+        }
+
+        // Apply additional attributes to the entire attributed string, if any are provided.
         if !attributes.isEmpty {
             mutableAttributedString.addAttributes(attributes)
         }
-        
-        /// 初始化富文本字符串内容
+
+        // Initialize with the constructed attributed string.
         self.init(attributedString: mutableAttributedString)
     }
     
@@ -161,21 +272,6 @@ public extension NSAttributedString {
         let mutableAttributedString = getMutableAttributedString()
         mutableAttributedString.append(attributedString)
         return mutableAttributedString as! Self
-    }
-}
-
-public extension Array where Element: NSAttributedString {
-    func attributedStringByJoined(separator: NSAttributedString) -> NSAttributedString {
-        guard let firstElement = first else {
-            return NSMutableAttributedString(string: "")
-        }
-        
-        let result = NSMutableAttributedString(attributedString: firstElement)
-        return dropFirst().reduce(result) { $0 + separator + $1 }
-    }
-    
-    func attributedStringByJoined(separator: String) -> NSAttributedString {
-        return attributedStringByJoined(separator: NSAttributedString(string: separator))
     }
 }
 

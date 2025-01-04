@@ -8,23 +8,51 @@
 import Foundation
 
 public extension Array where Element: Equatable {
-
-    /// Remove the first given object of current array.
-    /// - Parameter element: The removed object
-    /// - Returns: Removed index
+    /// Removes the first occurrence of the specified element from the array.
+    ///
+    /// - Parameter element: The element to be removed.
+    /// - Returns: The index of the removed element, or `nil` if the element was not found in the array.
+    ///
+    /// This method searches the array for the first occurrence of the given element, removes it,
+    /// and then returns the index of the removed element. If the element is not found, it returns `nil`.
+    ///
+    /// Example usage:
+    /// ```swift
+    /// var array = [1, 2, 3, 4, 5]
+    /// let removedIndex = array.removeFirst(3)
+    /// print(array)         // Output: [1, 2, 4, 5]
+    /// print(removedIndex)  // Output: 2
+    /// ```
     @discardableResult
     mutating func removeFirst(_ element: Element) -> Index? {
         guard let index = firstIndex(of: element) else { return nil }
         remove(at: index)
         return index
     }
-    
-    /// Remove the given object
-    /// - Parameter object: The removed object
-    /// - Returns: Removed index
+
+    /// Removes the first occurrence of the specified object from the array.
+    ///
+    /// - Parameter object: The object to be removed. The object must conform to the `Equatable` protocol.
+    /// - Returns: The index of the removed object, or `nil` if the object was not found in the array.
+    ///
+    /// This method searches the array for the first occurrence of the given object, removes it,
+    /// and then returns the index of the removed object. The object is compared using the `Equatable` protocol.
+    ///
+    /// Example usage:
+    /// ```swift
+    /// var array: [Any] = [1, "hello", 3.14, "world"]
+    /// let removedIndex = array.remove(object: "hello")
+    /// print(array)         // Output: [1, 3.14, "world"]
+    /// print(removedIndex)  // Output: 1
+    /// ```
+    ///
+    /// This method is particularly useful for heterogeneous arrays (`[Any]`) where you may need to
+    /// remove objects of specific types.
     @discardableResult
     mutating func remove<T: Equatable>(object: T) -> Index? {
         var index: Int?
+        
+        // Iterate through the array to find the first occurrence of the specified object.
         for (idx, objectToCompare) in enumerated() {
             if let to = objectToCompare as? T, object == to {
                 index = idx
@@ -32,8 +60,9 @@ public extension Array where Element: Equatable {
             }
         }
         
-        if index != nil {
-            remove(at: index!)
+        // If the object was found, remove it from the array.
+        if let validIndex = index {
+            remove(at: validIndex)
         }
         
         return index
@@ -41,9 +70,21 @@ public extension Array where Element: Equatable {
 }
 
 public extension Array {
-    /// 获取给定索引的数据
-    /// - Parameter indexes: 索引列表
-    /// - Returns: 对应的数据列表
+    /// Retrieves the elements at the specified indexes.
+    ///
+    /// - Parameter indexes: An `IndexSet` representing the list of indexes for the elements to retrieve.
+    /// - Returns: An array containing the elements corresponding to the provided indexes.
+    ///
+    /// This method iterates through the array and checks if each element's index exists in the `indexes` set.
+    /// If the index exists, the corresponding element is added to the results array.
+    ///
+    /// Example usage:
+    /// ```swift
+    /// let array = ["a", "b", "c", "d"]
+    /// let indexes: IndexSet = [1, 3]
+    /// let result = array.objects(at: indexes)
+    /// print(result) // Output: ["b", "d"]
+    /// ```
     func objects(at indexes: IndexSet) -> [Element] {
         var results: [Element] = []
         for (index, element) in enumerated() {
@@ -51,41 +92,49 @@ public extension Array {
                 results.append(element)
             }
         }
-
         return results
     }
-    
-    /// 分组并处理数组元素
+
+    /// Processes the array in groups of a specified size and applies a transformation to each group.
+    ///
     /// - Parameters:
-    ///   - groupCount: 每组的元素数量
-    ///   - block: 处理每组元素的闭包
-    /// - Returns: 处理后元素组成的数组
+    ///   - groupCount: The number of elements in each group. Must be greater than zero.
+    ///   - block: A closure that takes a subsequence of the array (a slice) and returns a transformed value of type `T?`.
+    ///            If the closure returns `nil`, the result is not added to the output array.
+    /// - Returns: An array of transformed values resulting from applying the closure to each group of elements.
     ///
-    /// 使用示例:
-    ///   ```swift
-    ///   let inputArray = ["1", "2", "3", "4", "5", "6", "7"]
-    ///   let result = inputArray.compactMap(groupCount: 2) { sub in
-    ///       // 对每组元素进行处理，将每个元素加1后转为字符串，并用逗号分隔
-    ///       return sub.compactMap({ String(describing: Int($0)! + 1) }).joined(separator: ", ")
-    ///   }.joined(separator: "\n")
+    /// This method divides the array into groups of size `groupCount` and applies the provided closure to each group.
+    /// If the array's size is not a multiple of `groupCount`, the final group may contain fewer elements.
     ///
-    ///   print(result)
-    ///   // 输出：
-    ///   // 2, 3
-    ///   // 4, 5
-    ///   // 6, 7
-    ///   // 8
-    ///   ```
+    /// Example usage:
+    /// ```swift
+    /// let inputArray = ["1", "2", "3", "4", "5", "6", "7"]
+    /// let result = inputArray.compactMap(groupCount: 2) { sub in
+    ///     // Process each group: Convert each element to Int, add 1, and join them into a string.
+    ///     return sub.compactMap({ String(describing: Int($0)! + 1) }).joined(separator: ", ")
+    /// }.joined(separator: "\n")
+    ///
+    /// print(result)
+    /// // Output:
+    /// // 2, 3
+    /// // 4, 5
+    /// // 6, 7
+    /// // 8
+    /// ```
     func compactMap<T>(groupCount: Int, using block: (Array.SubSequence) -> T?) -> [T] {
         var result: [T] = []
         var start = 0
         
+        // Validate that groupCount is greater than zero to avoid infinite loops.
+        guard groupCount > 0 else { return result }
+        
+        // Iterate through the array, forming groups of `groupCount` elements.
         while start < count {
-            let end = Swift.min(start + groupCount, count)
+            let end = Swift.min(start + groupCount, count) // Ensure we don't exceed the array bounds.
             if let value = block(self[start..<end]) {
                 result.append(value)
             }
-            start = end
+            start = end // Move the start index to the next group.
         }
         
         return result
@@ -184,7 +233,72 @@ public extension Array {
     }
 }
 
+public extension Array where Element: Comparable {
+    
+    /// Compares the current array with another array and returns their differences and intersection.
+    ///
+    /// - Description:
+    ///     - **Intersection**: Elements that exist in both arrays.
+    ///     - **Old elements**: Elements that exist only in the current array.
+    ///     - **New elements**: Elements that exist only in the `other` array.
+    ///
+    /// This method compares two arrays and categorizes their elements into three sets:
+    /// - Elements common to both arrays (intersection).
+    /// - Elements unique to the current array (oldest).
+    /// - Elements unique to the `other` array (newest).
+    ///
+    /// - Parameter other: The array to compare with.
+    /// - Returns: A tuple containing three arrays:
+    ///     - `newest`: Elements found only in the `other` array.
+    ///     - `oldest`: Elements found only in the current array.
+    ///     - `intersection`: Elements found in both arrays.
+    ///
+    /// Example usage:
+    /// ```swift
+    /// let currentArray = [1, 2, 3, 4]
+    /// let otherArray = [3, 4, 5, 6]
+    /// let result = currentArray.differenceSet(from: otherArray)
+    /// print("Newest: \(result.newest)")       // Output: [5, 6]
+    /// print("Oldest: \(result.oldest)")       // Output: [1, 2]
+    /// print("Intersection: \(result.intersection)") // Output: [3, 4]
+    /// ```
+    func differenceSet(from other: [Element]) -> (newest: [Element], oldest: [Element], intersection: [Element]) {
+        var mutableSelf = self                  // Create a mutable copy of the current array.
+        var mutableOther = other                // Create a mutable copy of the `other` array.
+        var intersections: [Element] = []       // Array to store intersection elements.
+        
+        // Iterate through each element in the current array.
+        for element in mutableSelf {
+            if other.contains(element) {        // Check if the element exists in the `other` array.
+                // Remove the element from both arrays as it belongs to the intersection.
+                mutableSelf.remove(object: element)
+                mutableOther.remove(object: element)
+                intersections.append(element)
+            }
+        }
+        
+        // Return the categorized elements as a tuple.
+        return (newest: mutableOther, oldest: mutableSelf, intersection: intersections)
+    }
+}
+
 public extension Array where Element: Any {
+    /// Converts the array's elements into an `NSMutableAttributedString`.
+    ///
+    /// - Parameters:
+    ///   - attributes: The default attributes to apply to the resulting attributed string.
+    ///   - imageOffsetCreator: An optional closure for determining the offset of any images in the array.
+    ///
+    /// - Returns: An `NSMutableAttributedString` containing all elements of the array, or `nil` if the array is empty.
+    ///
+    /// - Example:
+    ///   ```swift
+    ///   let array: [Any] = ["Text", UIImage(named: "icon")!, "More Text"]
+    ///   let attributedString = array.toAttributedString(
+    ///       attributes: [.font: UIFont.systemFont(ofSize: 16)],
+    ///       imageOffsetCreator: { _, _ in CGPoint(x: 0, y: -5) }
+    ///   )
+    ///   ```
     func toAttributedString(
         attributes: [NSAttributedString.Key: Any] = [:],
         imageOffsetCreator: NSAttributedString.AttributedImageCreator? = nil
@@ -195,30 +309,69 @@ public extension Array where Element: Any {
             imageOffsetCreator: imageOffsetCreator
         )
     }
-}
-
-public extension Array where Element: Comparable {
     
-    /// 比较当前数组与给定数组的差异性，并返回比对结果
-    /// - Description:
-    ///     - 两个数组中都有的为交集数据
-    ///     - 只有当前数组中才有的为旧的数据
-    ///     - 只有other数组中才有的为新的数据
-    /// - Parameter other: 需要比较的数组
-    /// - Returns: 比较结果
-    func differenceSet(from other: [Element]) -> (newest: [Element], oldest: [Element], intersection: [Element]) {
-        var mutableSelf = self
-        var mutableOther = other
-        var intersections: [Element] = []
-        
-        for ele in mutableSelf {
-            if other.contains(ele) {
-                mutableSelf.remove(object: ele)
-                mutableOther.remove(object: ele)
-                intersections.append(ele)
-            }
-        }
-        
-        return (mutableOther, mutableSelf, intersections)
+    /// Joins the array's elements into a single `NSMutableAttributedString`, separated by a specified plain string.
+    ///
+    /// - Parameters:
+    ///   - separator: A plain string used as a separator between elements in the resulting attributed string.
+    ///   - attributes: The default attributes to apply to the resulting attributed string.
+    ///   - imageOffsetCreator: An optional closure for determining the offset of any images in the array.
+    ///
+    /// - Returns: An `NSMutableAttributedString` containing all elements of the array
+    ///       joined by the separator, or `nil` if the array is empty.
+    ///
+    /// - Example:
+    ///   ```swift
+    ///   let array: [Any] = ["Hello", UIImage(named: "icon")!, "World"]
+    ///   let attributedString = array.attributedJoined(
+    ///       ", ",
+    ///       attributes: [.foregroundColor: UIColor.red],
+    ///       imageOffsetCreator: { _, _ in CGPoint(x: 0, y: -10) }
+    ///   )
+    ///   ```
+    func attributedStringByJoined(
+        _ separator: String,
+        attributes: [NSAttributedString.Key: Any] = [:],
+        imageOffsetCreator: NSAttributedString.AttributedImageCreator? = nil
+    ) -> NSMutableAttributedString? {
+        return NSMutableAttributedString(
+            sources: self,
+            separator: separator,
+            attributes: attributes,
+            imageOffsetCreator: imageOffsetCreator
+        )
+    }
+    
+    /// Joins the array's elements into a single `NSMutableAttributedString`, separated by an `NSAttributedString`.
+    ///
+    /// - Parameters:
+    ///   - separator: An attributed string used as a separator between elements in the resulting attributed string.
+    ///   - attributes: The default attributes to apply to the resulting attributed string.
+    ///   - imageOffsetCreator: An optional closure for determining the offset of any images in the array.
+    ///
+    /// - Returns: An `NSMutableAttributedString` containing all elements of the array
+    ///       joined by the separator, or `nil` if the array is empty.
+    ///
+    /// - Example:
+    ///   ```swift
+    ///   let separator = NSAttributedString(string: " | ", attributes: [.foregroundColor: UIColor.blue])
+    ///   let array: [Any] = ["Part 1", UIImage(named: "icon")!, "Part 2"]
+    ///   let attributedString = array.attributedJoined(
+    ///       separator,
+    ///       attributes: [.font: UIFont.boldSystemFont(ofSize: 18)],
+    ///       imageOffsetCreator: nil
+    ///   )
+    ///   ```
+    func attributedStringByJoined(
+        _ separator: NSAttributedString,
+        attributes: [NSAttributedString.Key: Any] = [:],
+        imageOffsetCreator: NSAttributedString.AttributedImageCreator? = nil
+    ) -> NSMutableAttributedString? {
+        return NSMutableAttributedString(
+            sources: self,
+            separator: separator,
+            attributes: attributes,
+            imageOffsetCreator: imageOffsetCreator
+        )
     }
 }
