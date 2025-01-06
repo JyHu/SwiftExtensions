@@ -375,3 +375,9 @@ public extension Array where Element: Any {
         )
     }
 }
+
+public extension Array where Element: Any {
+    func componentsJoined(by separator: String) -> String {
+        return map { String(describing: $0) }.joined(separator: separator)
+    }
+}
