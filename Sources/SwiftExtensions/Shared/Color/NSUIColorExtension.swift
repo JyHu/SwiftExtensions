@@ -155,6 +155,26 @@ public extension NSUIColor {
         let components = rgbComponents
         return UInt(components.red) << 16 + UInt(components.green) << 8 + UInt(components.blue)
     }
+    
+    /// 将颜色与白色混合，使颜色变淡（不改变 alpha）
+    func lighten(by amount: CGFloat) -> NSUIColor {
+        if amount <= 0 {
+            return self
+        }
+        
+        if amount >= 1 {
+            return NSUIColor.white
+        }
+        
+        let clamped = min(max(amount, 0), 1)
+        let components = rgbComponents
+
+        let red   = (1 - clamped) * components.red   + clamped * 1.0
+        let green = (1 - clamped) * components.green + clamped * 1.0
+        let blue  = (1 - clamped) * components.blue  + clamped * 1.0
+
+        return NSUIColor(red: red, green: green, blue: blue, alpha: 1)
+    }
 }
 
 #endif
