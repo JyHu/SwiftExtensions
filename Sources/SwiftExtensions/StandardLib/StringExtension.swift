@@ -277,6 +277,64 @@ public extension String {
         }
         return indentLength - 1
     }
+    
+    /// Enumerates all non-overlapping ranges of a given substring within the string.
+    ///
+    /// - Parameters:
+    ///   - string: The substring to search for.
+    ///   - options: A set of options to use when comparing the substring. Defaults to an empty set (i.e., case-sensitive, literal search).
+    ///   - handler: A closure that is called for each matching range. The range is relative to the base string.
+    ///
+    /// This method searches for all occurrences of the specified `string` within the base string, starting from the beginning
+    /// and moving forward, calling the `handler` with each `Range<String.Index>` where a match was found. The search is **non-overlapping**,
+    /// meaning that if a match is found, the next search starts after that match.
+    ///
+    /// - Note:
+    ///   - If `string` is empty, this method performs no search and the handler will not be called.
+    ///   - The `options` parameter allows for case-insensitive, backwards, anchored, or literal searches (among others).
+    ///
+    /// ### Example Usage:
+    ///
+    /// ```swift
+    /// let sentence = "This is a test. This is only a test."
+    /// sentence.enumerate("test") { range in
+    ///     print("Found match at range: \(range), substring: '\(sentence[range])'")
+    /// }
+    /// // Output:
+    /// // Found match at range: Range(10..<14), substring: 'test'
+    /// // Found match at range: Range(31..<35), substring: 'test'
+    /// ```
+    ///
+    /// Case-insensitive search:
+    ///
+    /// ```swift
+    /// let sentence = "Hello world. hello Swift."
+    /// sentence.enumerate("hello", options: [.caseInsensitive]) { range in
+    ///     print("Found '\(sentence[range])' at \(range)")
+    /// }
+    /// // Output:
+    /// // Found 'Hello' at Range(0..<5)
+    /// // Found 'hello' at Range(13..<18)
+    /// ```
+    @discardableResult
+    func enumerate(_ string: String, options: String.CompareOptions = [], handler: (Range<String.Index>) -> Void) -> Int {
+        var index = startIndex
+        var matches: Int = 0
+        
+        while index < endIndex {
+            let findRange = index..<endIndex
+            
+            guard let range = self.range(of: string, options: options, range: findRange) else {
+                return matches
+            }
+            
+            handler(range)
+            index = range.upperBound
+            matches += 1
+        }
+        
+        return matches
+    }
 }
 
 public extension String {
