@@ -150,8 +150,8 @@ public extension URL {
         return components?.url ?? self
     }
     
-    func relativePath(to url: URL) -> String {
-        return getPath().relate(to: url.getPath(), relativePath: "~")
+    func relativePath(to url: URL, relative: String = "") -> String {
+        return getPath().relate(to: url.getPath(), relativePath: relative)
     }
 }
 
