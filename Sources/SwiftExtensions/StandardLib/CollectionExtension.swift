@@ -113,3 +113,42 @@ public extension String.Index {
         string.distance(to: self)
     }
 }
+
+public extension Collection {
+    /// 将数组转换为字典，使用指定的闭包生成 Key
+    ///
+    /// **使用场景**：
+    /// - 将数组按某个属性分组，方便后续通过 Key 快速查找
+    /// - 避免重复遍历数组进行查找（O(n) → O(1)）
+    ///
+    /// **典型用法**：
+    /// ```swift
+    /// let users = [User(id: "1", name: "Alice"), User(id: "2", name: "Bob")]
+    /// let userMap = users.toMap { $0.id }
+    /// // 结果：["1": User(id: "1", ...), "2": User(id: "2", ...)]
+    ///
+    /// // 快速查找
+    /// if let user = userMap["1"] {
+    ///     print(user.name)  // "Alice"
+    /// }
+    /// ```
+    ///
+    /// **在框架中的使用**：
+    /// - 将 CloudKit Records 按 recordID 分组
+    /// - 将本地数据按 id 分组，方便冲突比较
+    /// - 将 Zones/Subscriptions 按 name/id 分组
+    ///
+    /// **注意**：
+    /// - 如果有重复的 Key，后面的元素会覆盖前面的元素
+    /// - 确保 Key 的唯一性，或者使用 Dictionary(grouping:) 代替
+    ///
+    /// - Parameter block: 从数组元素生成字典 Key 的闭包
+    /// - Returns: 转换后的字典 [Key: Element]
+    func toMap<K>(_ block: (Element) -> K) -> [K: Element] {
+        var map: [K: Element] = [:]
+        for element in self {
+            map[block(element)] = element
+        }
+        return map
+    }
+}

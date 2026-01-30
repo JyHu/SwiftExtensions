@@ -514,3 +514,51 @@ public extension Dictionary {
         return converted
     }
 }
+
+/// Dictionary 扩展，提供增强版的 compactMapValues 方法
+extension Dictionary {
+    /// 转换字典的 Value，并过滤掉 nil 结果（同时提供 Key 和 Value）
+    ///
+    /// **与标准库 compactMapValues 的区别**：
+    /// - 标准库：transform 只接收 Value
+    /// - 这个方法：transform 同时接收 Key 和 Value
+    ///
+    /// **使用场景**：
+    /// - 转换时需要同时使用 Key 和 Value 的信息
+    /// - 根据 Key 和 Value 的组合决定是否保留该项
+    ///
+    /// **典型用法**：
+    /// ```swift
+    /// let saveResults: [CKRecord.ID: Result<CKRecord, Error>] = ...
+    ///
+    /// // 只保留成功的记录，并提取 recordName 和 record
+    /// let successMap = saveResults.compactMapValues2 { recordID, result in
+    ///     if case .success(let record) = result {
+    ///         return (recordID.recordName, record)  // 同时使用 Key 和 Value
+    ///     }
+    ///     return nil
+    /// }
+    /// ```
+    ///
+    /// **在框架中的使用**：
+    /// - 处理 CloudKit modifyRecords 的结果
+    /// - 同时需要 recordID（Key）和 Result（Value）的信息
+    /// - 过滤成功/失败的记录，并提取有用的信息
+    ///
+    /// **性能**：
+    /// - 遍历一次字典，O(n)
+    /// - 只保留 transform 返回非 nil 的项
+    ///
+    /// - Parameter transform: 转换闭包，接收 (Key, Value)，返回新的 Value 或 nil
+    /// - Returns: 转换并过滤后的字典
+    /// - Throws: transform 闭包抛出的错误
+    func compactMapValues2<T>(_ transform: (Key, Value) throws -> T?) rethrows -> [Key: T] {
+        var dict: [Key: T] = [:]
+        for (key, value) in self {
+            if let newValue = try transform(key, value) {
+                dict[key] = newValue
+            }
+        }
+        return dict
+    }
+}
